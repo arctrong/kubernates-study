@@ -1,0 +1,258 @@
+<!--METADATA {"title": "Kubernetes"} -->
+
+[[NEXT](installation.html)]
+
+----------------------------------------------------------------------------------------------------
+[TOC]
+
+----------------------------------------------------------------------------------------------------
+_Jun 29, 2021_
+
+# Introduction
+
+Course: [Kubernetes Tutorial for Beginners [FULL COURSE in 4 Hours]](https://www.youtube.com/watch?v=X48VuDVv0do)    
+Published: __Nov 6, 2020__    
+Length: __3:36:54__
+
+Wikipedia: [Kubernetes](https://en.wikipedia.org/wiki/Kubernetes).
+
+Kubernetes home page: <https://kubernetes.io/>.    
+Kubernetes documentation: <https://kubernetes.io/docs/home/>.
+
+__Kubernetes__ or __K8s__ --- is an open-source __container-orchestration__ system for automating
+computer application deployment, scaling, and management. It was originally designed by Google
+and is now maintained by the Cloud Native Computing Foundation.
+
+Kubernetes license: [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+
+----------------------------------------------------------------------------------------------------
+# Orchestration tools features
+
+__High availability__ --- low or no downtime.
+
+__Scalability__ or high performance.
+
+__Disaster recovery__ --- backup and restore.
+
+----------------------------------------------------------------------------------------------------
+# Main Kubernetes components
+
+[5:20](https://youtu.be/X48VuDVv0do?t=320)
+
+Documentation section: 
+[Kubernetes Components](https://kubernetes.io/docs/concepts/overview/components/).
+
+
+## Nodes and Pods
+
+<img src="pict/pods.png" style="float: left; margin: 0 25px 25px 0;" />
+
+__Node__ is a physical or virtual machine.
+
+__Pod__ --- the smallest unit of K8s. Abstraction over container. K8s works not only with Docker
+containers. As users we interact only with the Kubernetes layer. Each Pod has its own IP address.
+
+Pods as components are __ephemeral__, which means they can die very easily. In this case a new Pod
+with a new IP address is created that is very inconvenient. So __Services__ come to the scene.
+
+<p style="clear: both;"></p>
+
+
+## Services and Ingresses
+
+<img src="pict/services_and_ingresses.png" style="float: left; margin: 0 25px 25px 0;" />
+
+__Service__ --- an IP address that can be attached to a Pod. If the Pod dies the service and the 
+IP address will stay. There may be __external__ services that are open for external communication
+and __internal__ ones (like database services). A service is an (HTTP) IP address and a port. But 
+for an end product we would want HTTPS and a domain name.
+
+__Ingress__ accepts internal requests and forwards it to the Services.
+
+<p style="clear: both;"></p>
+
+
+## ConfigMap and Secrets
+
+_Jul 1, 2021_
+
+[11:09](https://youtu.be/X48VuDVv0do?t=669)
+
+![](pict/cconfigmap_01.png)
+
+We have a Pod `my-app` that communicates with a database (say `mongo-db`) and its endpoint name
+changes to e.g. `mongo-db-1`. If the endpoint name is configured in the application property file
+(inside the built image) then we have to do a lot of tedious work to rebuild and redeploy the
+application `my-app`. Too much for such a small change.
+
+__ConfigMap__ keeps parameters that the applications may access (via e.g. environment variables
+or property files). __Secret__ mechanism (not activated by default) keeps secret data (in Base64
+format).
+
+
+_Jul 2, 2021_
+
+## Volumes
+
+[14:24](https://youtu.be/X48VuDVv0do?t=864)
+
+<img src="pict/volumes.png" style="float: left; margin: 0 25px 25px 0;" />
+
+When a database Pod stops, the data is gone. __Volumes__ are K8s components that attach physical
+storage to Pods. The storage may be _local_ (inside the K8s node), _remote_ or _cloud_ (outside
+the K8s node). 
+
+<p style="clear: both;"></p>
+
+> K8s doesn't explicitly manage the data persistence. The user or the administrator must be
+> responsible for the storage setup, backup, etc.
+
+
+## Deployment and StatefulSet
+
+[16:22](https://youtu.be/X48VuDVv0do?t=982)
+
+![](pict/replicas.png)
+
+To avoid downtime we would want to use principle "replicate everything". So we create replica
+Nodes in which corresponding Pods are connected to the same Services. The Services in this 
+case have also a function of __load balancing__.
+
+To create a replica of a Pod we don't create a separate instance of the Pod. Instead we define
+a _blueprint_ for the Pod and specify how many replicas we want to run. And this blueprint is
+another K8s component called __Deployment__. Deployment is abstraction of _Pod_.
+
+But we cannot replicate a database using a Deployment because databases are stateful. In this 
+case we use another K8s component called __StatefulSet__. So
+
+Deployment                      | StatefulSet
+--------------------------------|-----------------------------------------------
+for __stateless__ applications  | for __stateful__ applications (or databases)
+
+> __Note.__ Deploying StatefulSets is not an easy task. So DBs are often hosted and managed
+> outside of a K8s cluster.
+
+
+## K8s components summary
+
+![](pict/components_summary.png)
+
+There are much more other components but these are the main ones.
+
+----------------------------------------------------------------------------------------------------
+# K8s architecture
+
+[22:29](https://youtu.be/X48VuDVv0do?t=1349)
+
+The main topics to be discussed:
+
+- __Master__ and __worker__ (or __slave__) Nodes.
+- K8s __Cluster__.
+
+
+## Node processes
+
+![](pict/architecture_components_01.png)
+
+A __worker service__ or __worker Node__ is a Node that fulfills the user's tasks. Three
+processes must be installed on __every__ such Node:
+
+- __Container runtime__ (Docker in our case);
+- __Kubelet__ --- the process of the K8s itself. It interacts both --- the container runtime
+	and the Node. Kubelet starts a Pod with a container inside and assigns it resources (like
+	CPU, RAM and storage);
+- __Kube proxy__ --- intelligently forwards requests between Pods inside the Cluster. E.g. 
+	it'll rather send request from an app Node the the database on the same Node then on the 
+	other Node.
+
+
+## Master processes
+
+[26:26](https://youtu.be/X48VuDVv0do?t=1586)
+
+Usually K8s Cluster consists of multiple Nodes. How to:
+
+- schedule a Pod?
+- monitor?
+- reschedule/restart a Pod?
+- join a new Node?
+
+All this tasks are done by __Master Nodes__ (or __Master services__).
+
+![](pict/master_processes.png)
+
+Four completely different processes run on __every__ Master Node:
+
+- __API Server__ --- accepts requests to the Cluster. Plays roles of:
+	- Cluster gateway;
+	- gatekeeper for authentication.
+- __Scheduler__. When API Server is asked to run a new Pod it (after security checks) redirects
+	this request to the Scheduler that intelligently decides on which Node this Pod must be run
+	(depending on the available resources and the Nodes busyness). The Scheduler just decides
+	where to run the Pod, the Kubelet on the Node actually does the scheduling.
+- __Controller Manager__ --- detects state changes (like Pod crash) and tries to restore the
+	Cluster state ASAP. It sends requests to the Scheduler and the same cycle is started 
+	(including resource calculation, request to the Kubelet, etc.).
+- __etcd__ (sometimes called the "cluster brain") --- key-value store of the Cluster state.
+	Keeps information about Nodes and Pods, the Cluster health, etc. Other processes use etcd
+	when they need this information. (__Note.__ No actual application data is stored in the 
+	etcd.)
+
+K8s Clusters usually have multiple Master Nodes each having their own Master processes. In this 
+case:
+
+- the API Services are load balanced;
+- and the etcd database is shared across all the Master Nodes.
+
+
+## Example Cluster setup
+
+[33:06](https://youtu.be/X48VuDVv0do?t=1986)
+
+Let's say we will have 2 Master Nodes and 3 Worker Nodes.
+
+> __Remark.__ Master Nodes are more important but they have less load of work and consume less 
+> resources.
+
+General algorithm of adding a new Master/Worker Node:
+
+- get a new bare server;
+- install all the Master/Worker processes;
+- add it to the Cluster.
+
+----------------------------------------------------------------------------------------------------
+# Minikube and `kubectl` - Local Setup
+
+[34:47](https://www.youtube.com/watch?v=X48VuDVv0do&t=2087s)
+
+In the production environment:
+
+- multiple Master and Worker Nodes are used;
+- each Node is a separate physical or virtual machine.
+
+For a personal testing on a local machine such setup may be too difficult or impossible.
+So [__minicube__](https://minikube.sigs.k8s.io/docs/), open source solution, may be used that
+runs Master and Worker processes on one machine and has Docker runtime container preinstalled.
+
+[`kubectl`](https://kubernetes.io/docs/reference/kubectl/overview/) is a command line tool for
+K8s cluster. There are also web interface and REST API, but `kubectl` is the most powerful. 
+It communicates with the Master Node API Server to fulfill tasks like creating and destroying
+pods, creating services, etc.
+
+> We will use `kubectl` to work with the minikube cluster. But `kubectl` may be used for
+> managing real clusters as well.
+
+----------------------------------------------------------------------------------------------------
+[[NEXT](installation.html)]
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------

@@ -1,0 +1,4 @@
+-i doc_src/about.txt -o doc/about.html --template doc_src/templates/custom.html --no-css
+-i doc_src/index.txt -o doc/index.html --template doc_src/templates/custom.html --no-css
+-i doc_src/installation.txt -o doc/installation.html --template doc_src/templates/custom.html --no-css
+-i doc_src/practice.txt -o doc/practice.html --template doc_src/templates/custom.html --no-css

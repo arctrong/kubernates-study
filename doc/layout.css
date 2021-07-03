@@ -1,0 +1,61 @@
+body {
+    margin:34px 0 0 250px;
+    padding:20px;
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    height: 24px;
+    margin: 0;
+    padding: 5px 20px;
+    background-color: papayawhip;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.sidebar {
+    position: fixed;
+    top: 34px;
+    bottom: 0;
+    z-index: 2;
+    margin: 0;
+    padding: 20px;
+    left: 0;
+    width: 210px;
+    overflow-y: auto;
+    background-color: lightskyblue;
+}
+
+table.sidebarAligner {
+    height: 100%;
+    width:100%;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+table.sidebarAligner td {
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+
+.sidebarAligner td.bottom {
+    font-size: smaller;
+}
+
+a[name], a[id] {
+    height: 30px;
+    display: block;
+    margin-top: -49px;
+}
+
+h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
+    content: '';
+    display: block;
+    height:      30px;
+    margin-top: -30px;
+}

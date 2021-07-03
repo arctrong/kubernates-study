@@ -1,0 +1,295 @@
+<!--METADATA {"title": "Practice"} -->
+
+[[BACK](installation.html)]
+
+----------------------------------------------------------------------------------------------------
+[TOC]
+
+----------------------------------------------------------------------------------------------------
+_Jul 3, 2021_
+
+# Creating Minikube cluster
+
+[44:29](https://www.youtube.com/watch?v=X48VuDVv0do&t=2489s)
+
+Starting minicube cluster.
+
+> In non-Linux environment `--vm-driver` parameter must be used.
+
+````shell
+$ minikube start
+.  .  .
+* Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
+
+$ minikube status
+minikube
+type: Control Plane
+host: Running
+kubelet: Running
+apiserver: Running
+kubeconfig: Configured
+
+$ kubectl get nodes
+NAME       STATUS   ROLES                  AGE   VERSION
+minikube   Ready    control-plane,master   14h   v1.20.7
+````
+
+There's the only Master Node so far.
+
+----------------------------------------------------------------------------------------------------
+# Main `kubectl` commands
+
+[44:52](https://youtu.be/X48VuDVv0do?t=2692)
+
+
+## Creating a Deployment
+
+````shell
+$ kubectl get pods
+No resources found in default namespace.
+
+$ kubectl get services
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   14h
+````
+
+````shell
+$ kubectl create -h
+Create a resource from a file or from stdin.
+
+ JSON and YAML formats are accepted.
+.  .  .
+Available Commands:
+.  .  .
+  deployment          Create a deployment with the specified name.
+  ingress             Create an ingress with the specified name.
+  job                 Create a job with the specified name.
+  secret              Create a secret using specified subcommand
+  service             Create a service using specified subcommand.
+.  .  .
+````
+
+But there's no `pod` in the `Available Commands`. That's because we are not creating Pods
+directly. We use Deployments (abstraction over Pods) instead.
+
+````shell
+$ kubectl create deployment nginx-depl --image=nginx
+deployment.apps/nginx-depl created
+````
+
+This used the latest version of the image on the [Docker Hub](https://hub.docker.com/).
+
+````shell
+$ kubectl get deployments
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+nginx-depl   1/1     1            1           3m53s
+
+$ kubectl get pods
+NAME                          READY   STATUS    RESTARTS   AGE
+nginx-depl-5c8bf76b5b-rmnmj   1/1     Running   0          5m2s
+
+$ kubectl get replicasets
+NAME                    DESIRED   CURRENT   READY   AGE
+nginx-depl-5c8bf76b5b   1         1         1       6m59s
+````
+
+
+## Editing Deployments
+
+````shell
+$ kubectl edit deployment nginx-depl
+````
+
+The auto-generated file of the Deployment will be opened in the text editor. Let's, for example,
+replace `- image: nginx` by `- image: nginx:1.20` and save the configuration.
+
+````shell
+deployment.apps/nginx-depl edited
+
+greg@deimos:~$ kubectl get pods
+NAME                          READY   STATUS    RESTARTS   AGE
+nginx-depl-58f65d4b6f-hk44c   1/1     Running   0          30s
+
+$ kubectl get replicasets
+NAME                    DESIRED   CURRENT   READY   AGE
+nginx-depl-58f65d4b6f   1         1         1       5m33s
+nginx-depl-5c8bf76b5b   0         0         0       36m
+````
+
+We see the new Deployment with the new ID and that the old deployment has no replicas in its
+ReplicaSet.
+
+
+## Debugging Pods
+
+[52:05](https://youtu.be/X48VuDVv0do?t=3125)
+
+````shell
+$ kubectl logs nginx-depl-58f65d4b6f-hk44c
+/docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+/docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+.  .  .
+2021/07/03 10:06:05 [notice] 1#1: start worker process 35
+````
+
+Let's create another deployment and look at its log:
+
+````shell
+$ kubectl create deployment mongo-depl --image=mongo
+deployment.apps/mongo-depl created
+
+$ kubectl get pods
+NAME                          READY   STATUS    RESTARTS   AGE
+mongo-depl-5fd6b7d4b4-jj4b5   1/1     Running   0          47s
+nginx-depl-58f65d4b6f-hk44c   1/1     Running   0          88m
+
+$ kubectl logs mongo-depl-5fd6b7d4b4-jj4b5
+{"t":{"$date":"2021-07-03T11:34:44.399+00:00"},"s":"I",  "c":"CONTROL",  "id":23285,   "ctx":"main",
+"msg":"Automatically disabling TLS 1.0, to force-enable TLS 1.0 specify --sslDisabledProtocols 'none'"}
+.  .  .
+{"t":{"$date":"2021-07-03T11:34:45.075+00:00"},"s":"I",  "c":"NETWORK",  "id":23015,   
+"ctx":"listener","msg":"Listening on","attr":{"address":"0.0.0.0"}}
+{"t":{"$date":"2021-07-03T11:34:45.075+00:00"},"s":"I",  "c":"NETWORK",  "id":23016,   
+"ctx":"listener","msg":"Waiting for connections","attr":{"port":27017,"ssl":"off"}}
+.  .  .
+````
+
+Getting Pod information:
+
+````shell
+$ kubectl describe pod mongo-depl-5fd6b7d4b4-jj4b5
+Name:         mongo-depl-5fd6b7d4b4-jj4b5
+.  .  .
+Events:
+  Type    Reason     Age    From               Message
+  ----    ------     ----   ----               -------
+  Normal  Scheduled  8m21s  default-scheduler  Successfully assigned default/mongo-depl-5fd6b7d4b4-jj4b5 to minikube
+  Normal  Pulling    8m20s  kubelet            Pulling image "mongo"
+  Normal  Pulled     7m38s  kubelet            Successfully pulled image "mongo" in 42.583008968s
+  Normal  Created    7m37s  kubelet            Created container mongo
+  Normal  Started    7m37s  kubelet            Started container mongo
+````
+
+Another very useful command allows to enter a Pod as a `root` user:
+
+````shell
+$ kubectl exec -it mongo-depl-5fd6b7d4b4-jj4b5 -- /bin/bash
+root@mongo-depl-5fd6b7d4b4-jj4b5:/# whoami
+root
+root@mongo-depl-5fd6b7d4b4-jj4b5:/# exit
+exit
+$
+````
+
+
+## Deleting Deployments
+
+[55:11](https://youtu.be/X48VuDVv0do?t=3311)
+
+````shell
+$ kubectl get deployments
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+mongo-depl   1/1     1            1           22m
+nginx-depl   1/1     1            1           141m
+
+$ kubectl delete deployment mongo-depl
+deployment.apps "mongo-depl" deleted
+
+$ kubectl get pods
+NAME                          READY   STATUS        RESTARTS   AGE
+mongo-depl-5fd6b7d4b4-jj4b5   0/1     Terminating   0          22m
+nginx-depl-58f65d4b6f-hk44c   1/1     Running       0          110m
+````
+
+It needs some little time to complete the operation:
+
+````shell
+$ kubectl get pods
+NAME                          READY   STATUS    RESTARTS   AGE
+nginx-depl-58f65d4b6f-hk44c   1/1     Running   0          110m
+
+$ kubectl get replicasets
+NAME                    DESIRED   CURRENT   READY   AGE
+nginx-depl-58f65d4b6f   1         1         1       111m
+nginx-depl-5c8bf76b5b   0         0         0       142m
+````
+
+
+## Applying configuration files
+
+[56:18](https://youtu.be/X48VuDVv0do?t=3378)
+
+We can do all the CRUD operation the similar way on the K8s components (like Deployments, Pods,
+Services, etc.). We can specify all the parameters (like Deployment name, image name, etc.) in
+the command line but that is impractical. That's why we would usually work with K8s
+__configuration files__. 
+
+First create the configuration file:
+
+````shell
+$ vi nginx-deployment.yaml
+````
+
+Fill it with the content of the file
+[`nginx-deployment.yaml`](../fromAuthor/kubernetes-configuration-file-explained/nginx-deployment.yaml).
+
+````shell
+$ kubectl apply -f nginx-deployment.yaml
+deployment.apps/nginx-deployment created
+
+$ kubectl get pods
+NAME                               READY   STATUS    RESTARTS   AGE
+nginx-deployment-f4b7bbcbc-gpffv   1/1     Running   0          50s
+nginx-deployment-f4b7bbcbc-w9tpc   1/1     Running   0          50s
+
+$ kubectl get deployments
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+nginx-deployment   2/2     2            2           5m45s
+````
+
+We see two Pods because we specified `replicas: 2` in the configuration file.
+
+We can change the configuration file and apply it again. In this case K8s will update the
+existing Deployment. For example, lets replace `replicas: 2` by `replicas: 1`:
+
+````shell
+$ kubectl apply -f nginx-deployment.yaml
+deployment.apps/nginx-deployment configured
+
+$ kubectl get deployments
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+nginx-deployment   1/1     1            1           12m
+
+$ kubectl get po
+NAME                               READY   STATUS    RESTARTS   AGE
+nginx-deployment-f4b7bbcbc-gpffv   1/1     Running   0          12m
+````
+
+Here K8s decided itself which Pod to stop.
+
+
+## Summarize `kubectl` commands
+
+[1:01:14](https://youtu.be/X48VuDVv0do?t=3674)
+
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+
+
+----------------------------------------------------------------------------------------------------
+[[BACK](installation.html)]
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
