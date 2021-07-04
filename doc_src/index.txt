@@ -10,10 +10,6 @@ _Jun 29, 2021_
 
 # Introduction
 
-Course: [Kubernetes Tutorial for Beginners [FULL COURSE in 4 Hours]](https://www.youtube.com/watch?v=X48VuDVv0do)    
-Published: __Nov 6, 2020__    
-Length: __3:36:54__
-
 Wikipedia: [Kubernetes](https://en.wikipedia.org/wiki/Kubernetes).
 
 Kubernetes home page: <https://kubernetes.io/>.    
@@ -183,6 +179,8 @@ All this tasks are done by __Master Nodes__ (or __Master services__).
 
 Four completely different processes run on __every__ Master Node:
 
+<a id="master_node_processes"></a>
+
 - __API Server__ --- accepts requests to the Cluster. Plays roles of:
 	- Cluster gateway;
 	- gatekeeper for authentication.
@@ -193,10 +191,10 @@ Four completely different processes run on __every__ Master Node:
 - __Controller Manager__ --- detects state changes (like Pod crash) and tries to restore the
 	Cluster state ASAP. It sends requests to the Scheduler and the same cycle is started 
 	(including resource calculation, request to the Kubelet, etc.).
-- __etcd__ (sometimes called the "cluster brain") --- key-value store of the Cluster state.
-	Keeps information about Nodes and Pods, the Cluster health, etc. Other processes use etcd
-	when they need this information. (__Note.__ No actual application data is stored in the 
-	etcd.)
+- __etcd__ (sometimes called the "cluster brain") --- key-value store of
+	the Cluster state. Keeps information about Nodes and Pods, the Cluster health, etc. Other
+	processes use etcd when they need this information. (__Note.__ No actual application data is
+	stored in the etcd.)
 
 K8s Clusters usually have multiple Master Nodes each having their own Master processes. In this 
 case:
