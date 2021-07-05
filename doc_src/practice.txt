@@ -8,11 +8,9 @@
 ----------------------------------------------------------------------------------------------------
 _Jul 3, 2021_
 
-# Creating Minikube cluster
+# Starting Minikube cluster
 
 [44:29](https://www.youtube.com/watch?v=X48VuDVv0do&t=2489s)
-
-Starting minicube cluster.
 
 > In non-Linux environment `--vm-driver` parameter must be used.
 
@@ -231,7 +229,7 @@ $ vi nginx-deployment.yaml
 ````
 
 Fill it with the content of the file
-[`nginx-deployment.yaml`](../fromAuthor/kubernetes-configuration-file-explained/nginx-deployment.yaml).
+[`nginx-deployment.yaml`](../provided/kubernetes-configuration-file-explained/nginx-deployment.yaml).
 
 ````shell
 $ kubectl apply -f nginx-deployment.yaml
@@ -297,17 +295,10 @@ __Use configuration file for CRUD:__
 [1:02:03](https://youtu.be/X48VuDVv0do?t=3723)
 
 
-## Overview
-
-- The three parts of configuration file
-- Connecting Services to Deployments and Pods
-- Demo
-
-
 ## Three parts of K8s configuration file
 
-See [nginx-deployment.yaml](../fromAuthor/kubernetes-configuration-file-explained/nginx-deployment.yaml)
-and [nginx-service.yaml](../fromAuthor/kubernetes-configuration-file-explained/nginx-service.yaml).
+See [nginx-deployment.yaml](../provided/kubernetes-configuration-file-explained/nginx-deployment.yaml)
+and [nginx-service.yaml](../provided/kubernetes-configuration-file-explained/nginx-service.yaml).
 
 `kind: Deployment` and `kind: Service` show what we are going to create.
 
@@ -358,7 +349,7 @@ concept](https://en.wikipedia.org/wiki/Infrastructure_as_code)).
 
 Whenever we want to create a Pod we create a Deployment and K8s takes care of the rest.
 
-See [nginx-deployment.yaml](../fromAuthor/kubernetes-configuration-file-explained/nginx-deployment.yaml),
+See [nginx-deployment.yaml](../provided/kubernetes-configuration-file-explained/nginx-deployment.yaml),
 `spec/template:`. The template also has its metadata and specification. So it's a configuration file
 inside a configuration file. The latter configuration applies to a Pod, so it is the __blueprint__
 for a Pod.
@@ -374,15 +365,15 @@ This is done using __labels__ and __selectors__. Also see K8s documentation
 
 ![](pict/labels_and_selectors.png)
 
-See [nginx-deployment.yaml](../fromAuthor/kubernetes-configuration-file-explained/nginx-deployment.yaml)
-and [nginx-service.yaml](../fromAuthor/kubernetes-configuration-file-explained/nginx-service.yaml).
+See [nginx-deployment.yaml](../provided/kubernetes-configuration-file-explained/nginx-deployment.yaml)
+and [nginx-service.yaml](../provided/kubernetes-configuration-file-explained/nginx-service.yaml).
 
 <img src="pict/ports_01.png" style="float: left; margin: 0 25px 25px 0;" />
 
 ![](pict/ports_02.png)
 
-So the Service will accept requests on the port `80` and forwards them the to port `8080` of the
-Pod.
+So the Service will accept requests on the port `80` and forwards them the the to port `8080`
+of the Pod.
 
 <p style="clear: both;"></p>
 
@@ -450,16 +441,332 @@ service "nginx-service" deleted
 [1:16:16](https://youtu.be/X48VuDVv0do?t=4576)
 
 
+## Project overview
+
+![](pict/project_overview.png)
+
+
+## MongoDB Deployment
+
+[1:18:29](https://youtu.be/X48VuDVv0do?t=4709)
+
+See [provided/demo-kubernetes-components/](../provided/demo-kubernetes-components/).
+
+Minicube cluster must be running (if not start it with `minicube start`).
+
+````shell
+$ kubectl get all
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   2d12h
+````
+
+So the cluster is empty and we are starting from scratch.
+
+We are going to create the file 
+[provided/demo-kubernetes-components/mongo.yaml](../provided/demo-kubernetes-components/mongo.yaml).
+
+````shell
+$ cd ~/Kubernates/mongo_demo
+
+vi mongo.yaml
+````
+
+Fill it with the initial configuration with lines `1..19`.
+
+Then visiting [MongoDB Docker Hub page](https://hub.docker.com/_/mongo) to find the image usage
+details, particularly, that it listens on the port `27017` by default and uses environment
+variables `MONGO_INITDB_ROOT_USERNAME` and `MONGO_INITDB_ROOT_PASSWORD`.
+
+Adding this configuration but not specifying the exact secret values in the configuration file. 
+Using Secret component instead. 
+
+![](pict/secret_reference.png)
+
+Copying file
+[provided/demo-kubernetes-components/mongo-secret.yaml](../provided/demo-kubernetes-components/mongo-secret.yaml)
+to our working directory. `type: Opaque` would be different if we used SSL/TLS. Here's the way
+the base64-encoded strings were obtained.
+
+````shell
+$ echo -n 'username' | base64
+dXNlcm5hbWU=
+
+$ echo -n 'password' | base64
+cGFzc3dvcmQ=
+````
+
+> This is not a secure way of keeping secret data. There are built-in encryption options that
+> are not enabled by default.
+
+Applying the Secret:
+
+````shell
+$ kubectl apply -f mongo-secret.yaml
+secret/mongodb-secret created
+
+$ kubectl get secrets
+NAME                  TYPE                                  DATA   AGE
+default-token-fwttv   kubernetes.io/service-account-token   3      2d18h
+mongodb-secret        Opaque                                2      56s
+````
+
+Filling the `mongo.yaml` file. Instead of 
+
+````code
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          value: username
+````
+
+setting
+
+````code
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: mongo-root-username
+````
+
+Applying the Deployment:
+
+````shell
+$ kubectl apply -f mongo.yaml
+deployment.apps/mongodb-deployment created
+
+$ kubectl get all
+NAME                                      READY   STATUS    RESTARTS   AGE
+pod/mongodb-deployment-796577dc64-l8sfd   1/1     Running   0          73s
+
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   2d18h
+
+NAME                                 READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/mongodb-deployment   1/1     1            1           73s
+
+NAME                                            DESIRED   CURRENT   READY   AGE
+replicaset.apps/mongodb-deployment-796577dc64   1         1         1       73s
+````
+
+So we see the running Pod, The Deployment and the ReplicaSet.
+
+
+## MongoDB internal Service
+
+[1:28:48](https://youtu.be/X48VuDVv0do?t=5327)
+
+We will define multiple documents in one YAML file (separated by `---`). Adding the lines starting
+with `---` in file 
+[provided/demo-kubernetes-components/mongo.yaml](../provided/demo-kubernetes-components/mongo.yaml)
+into the file with the same name in our working directory. This is reasonable since we cannot use
+a DB server without a Service. In this part:
+
+- `kind: Secret` defines that a Service is configured;
+- `selector/app: mongodb` links the Service with the Deployment;
+- `port: 27017` --- the port that's exposed outside;
+- `targetPort: 27017` --- the port in the target Pod where the requests will be forwarded.
+
+Now applying the same file:
+
+````shell
+$ kubectl apply -f mongo.yaml
+deployment.apps/mongodb-deployment unchanged
+service/mongodb-service created
+
+$ kubectl get services
+NAME              TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)     AGE
+kubernetes        ClusterIP   10.96.0.1      <none>        443/TCP     2d19h
+mongodb-service   ClusterIP   10.105.29.12   <none>        27017/TCP   78s
+
+$ kubectl describe service mongodb-service
+Name:              mongodb-service
+.  .  .
+Endpoints:         172.17.0.6:27017
+.  .  .
+
+$ kubectl get pods -o wide
+NAME                                 READY   STATUS    RESTARTS   AGE   IP           NODE       NOMINATED NODE   READINESS GATES
+mongodb-deployment-8f6675bc5-x2pzj   1/1     Running   0          15m   172.17.0.6   minikube   <none>           <none>
+````
+
+
+## Mongo Express Deployment and ConfigMap
+
+[1:33:21](https://youtu.be/X48VuDVv0do?t=5601)
+
+See [provided/demo-kubernetes-components/mongo-express.yaml](../provided/demo-kubernetes-components/mongo-express.yaml).
+To create this file we visited the [Mongo Express Docker Hub page](https://hub.docker.com/_/mongo-express)
+found that Mongo Express server listens on the port `8081` by default and uses a lot of
+environment variables from which we need:
+
+- `ME_CONFIG_MONGODB_PORT`
+- `ME_CONFIG_MONGODB_SERVER`
+- `ME_CONFIG_MONGODB_ADMINUSERNAME`
+- `ME_CONFIG_MONGODB_ADMINPASSWORD`
+
+For the secret data we use the existing Secret component. For the other variables we are going to
+create a ConfigMap component. Copying the file
+[provided/demo-kubernetes-components/mongo-configmap.yaml](../provided/demo-kubernetes-components/mongo-configmap.yaml)
+to our working directory.
+
+The references to the ConfigMap is done like this:
+
+````code
+        - name: ME_CONFIG_MONGODB_SERVER
+          valueFrom: 
+            configMapKeyRef:
+              name: mongodb-configmap
+              key: database_url
+````
+
+Applying first the ConfigMap, then the Deployment:
+
+````shell
+$ kubectl apply -f mongo-configmap.yaml
+configmap/mongodb-configmap created
+
+$ kubectl apply -f mongo-express.yaml
+deployment.apps/mongo-express created
+
+$ kubectl get pods
+NAME                                 READY   STATUS    RESTARTS   AGE
+mongo-express-78fcf796b8-5t7jf       1/1     Running   0          92s
+mongodb-deployment-8f6675bc5-x2pzj   1/1     Running   0          43m
+
+$ kubectl logs mongo-express-78fcf796b8-5t7jf
+.  .  .
+Mongo Express server listening at http://0.0.0.0:8081
+Server is open to allow connections from anyone (0.0.0.0)
+.  .  .
+````
+
+
+## Mongo Express external Service
+
+[1:40:14](https://youtu.be/X48VuDVv0do?t=6014)
+
+Now we are going to expose the Mongo Express server for connection from browsers from the outside
+the cluster. We are doing it the same way as in the file `mongo.yaml`, i.e. defining the Service
+configuration in the same file `mongo-express.yaml`. What makes this Service __external__?
+
+- `spec/type: LoadBalancer`. Though it may be not a good name but in fact every external Service
+	has a function of load balancing;
+- `spec/ports/nodePort: 30000` --- the port that will be visible from the outside. Must be
+	between 30000 and 32767.
+	
+Applying the created configuration file:
+
+````shell
+$ kubectl apply -f mongo-express.yaml
+deployment.apps/mongo-express unchanged
+service/mongo-express-service created
+
+$ kubectl get service
+NAME                    TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+kubernetes              ClusterIP      10.96.0.1        <none>        443/TCP          2d20h
+mongo-express-service   LoadBalancer   10.101.164.221   <pending>     8081:30000/TCP   67s
+mongodb-service         ClusterIP      10.105.29.12     <none>        27017/TCP        55m
+````
+
+> `EXTERNAL-IP = <pending>` --- this is because we run it in minikube, in a real K8s cluster we
+> will see a certain IP address.
+
+To open the Mongo Express web interface execute:
+
+````shell
+$ minikube service mongo-express-service
+|-----------|-----------------------|-------------|---------------------------|
+| NAMESPACE |         NAME          | TARGET PORT |            URL            |
+|-----------|-----------------------|-------------|---------------------------|
+| default   | mongo-express-service |        8081 | http://192.168.49.2:30000 |
+|-----------|-----------------------|-------------|---------------------------|
+* Opening service default/mongo-express-service in default browser...
+greg@deimos:~/Kubernates/mongo_demo$ MoTTY X11 proxy: Unsupported authorisation protocol
+Unable to init server: Broadway display type not supported: localhost:10.0
+Error: cannot open display: localhost:10.0
+````
+
+This works when executing directly on the Ubuntu host. It opens the page in the default browser:
+
+![](pict/mongo-express-web.png)
+
+
+## Access external Service from outside minicube cluster
+
+According to [this](https://github.com/kubernetes/minikube/issues/8008) minikube cannot expose
+external Services outside the cluster machine. Will use [nginx](https://www.nginx.com/) to
+the request forward. nginx was installed before so its installation is not discussed here.
+
+If minikube was restarted the following command must be executed:
+
+````shell
+$ minikube service mongo-express-service --url=true
+http://192.168.49.2:30000
+````
+
+The returned URL will be used later.
+
+````shell
+$ less /etc/nginx/nginx.conf
+.  .  .
+http {
+.  .  .
+        include /etc/nginx/sites-enabled/*;
+.  .  .
+
+$ sudo vi /etc/nginx/sites-enabled/default
+````
+
+Add another server:
+
+````
+server {
+        listen 8040;
+        listen [::]:8040;
+
+        root /var/www/html;
+
+        # Add index.php to the list if you are using PHP
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name _;
+
+        location / {
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_pass http://192.168.49.2:30000;
+        }
+}
+````
+
+Then restart the nginx service:
+
+````shell
+$ sudo service nginx start
+
+$ sudo service nginx status
+.  .  .
+   Active: active (running) since Mon 2021-07-05 21:48:14 MSK; 7s ago
+.  .  .
+
+$ hostname -I
+192.168.1.500 ...
+````
+
+Then open the link _http://192.168.1.500:8040/_ in a browser on the other machine.
+
+----------------------------------------------------------------------------------------------------
+# K8s Namespaces
+
+[1:46:14](https://youtu.be/X48VuDVv0do?t=6374)
+
+
+
 
 ----------------------------------------------------------------------------------------------------
 
 ----------------------------------------------------------------------------------------------------
-
-----------------------------------------------------------------------------------------------------
-
-----------------------------------------------------------------------------------------------------
-
-
 
 ----------------------------------------------------------------------------------------------------
 [[BACK](installation.html)]

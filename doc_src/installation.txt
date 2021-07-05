@@ -162,7 +162,7 @@ Server Version: v1.20.7
 > This step is not necessary. The Dashboard may be a convenient administration tool but we are
 > going to use command line in the course.
 
-````
+````shell
 $ minikube dashboard
 .  .  .
 * Opening http://127.0.0.1:46867/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/ in your default browser...
