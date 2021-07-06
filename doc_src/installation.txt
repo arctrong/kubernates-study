@@ -1,8 +1,10 @@
 <!--METADATA {"title": "Minikube and kubectl installation"} -->
 
-[[BACK](index.html)] | [[NEXT](practice.html)]
+[[BACK](index.html)] | [[NEXT](kubectl_commands.html)]
 
 ----------------------------------------------------------------------------------------------------
+<p style="font-size: 40px; font-weight: bold;">Minikube and kubectl installation</p>
+
 [TOC]
 
 ----------------------------------------------------------------------------------------------------
@@ -160,7 +162,7 @@ Server Version: v1.20.7
 # Trying minikube Dashboard
 
 > This step is not necessary. The Dashboard may be a convenient administration tool but we are
-> going to use command line in the course.
+> going to use primarily command line in the course.
 
 ````shell
 $ minikube dashboard
@@ -171,38 +173,14 @@ Error: cannot open display: localhost:10.0
 ````
 
 This works if executed on the Ubuntu host directly. The link is automatically opened in the 
-browser. Need some extra hops to access from the other machine. According to this
-[Stackoverflow answer](https://stackoverflow.com/a/53830578), in the first remote terminal
-window run:
-
-````shell
-$ kubectl proxy --address='0.0.0.0' --disable-filter=true
-````
-
-In the second remote terminal window run:
-
-````shell
-$ hostname -I
-192.168.1.500 ...
-
-$ minikube dashboard --url=true
-* Verifying dashboard health ...
-* Launching proxy ...
-* Verifying proxy health ...
-http://127.0.0.1:39465/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/
-````
-
-Then in a browser on a remote machine open:
-<http://192.168.1.500:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/>.
-
-The interface must look like this:
+browser:
 
 ![](pict/minikube_dashboard.png)
 
-Press `Ctrl`+`C` to stop the processes in the terminal windows.
+External access may be adjusted using [these instructions](external_access.html#using_k8s_proxy).
 
 ----------------------------------------------------------------------------------------------------
-[[BACK](index.html)] | [[NEXT](practice.html)]
+[[BACK](index.html)] | [[NEXT](kubectl_commands.html)]
 
 ----------------------------------------------------------------------------------------------------
 

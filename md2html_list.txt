@@ -1,4 +1,10 @@
 -i doc_src/about.txt -o doc/about.html --template doc_src/templates/custom.html --no-css
 -i doc_src/index.txt -o doc/index.html --template doc_src/templates/custom.html --no-css
 -i doc_src/installation.txt -o doc/installation.html --template doc_src/templates/custom.html --no-css
--i doc_src/practice.txt -o doc/practice.html --template doc_src/templates/custom.html --no-css
+-i doc_src/external_access.txt -o doc/external_access.html --template doc_src/templates/custom.html --no-css
+-i doc_src/kubectl_commands.txt -o doc/kubectl_commands.html --template doc_src/templates/custom.html --no-css
+-i doc_src/yaml_config_file.txt -o doc/yaml_config_file.html --template doc_src/templates/custom.html --no-css
+-i doc_src/demo_project.txt -o doc/demo_project.html --template doc_src/templates/custom.html --no-css
+-i doc_src/namespaces.txt -o doc/namespaces.html --template doc_src/templates/custom.html --no-css
+
+

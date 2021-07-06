@@ -1,0 +1,168 @@
+<!--METADATA {"title": "External access"} -->
+
+<p style="font-size: 40px; font-weight: bold;">Access external Services from outside the minicube
+cluster</p>
+
+[TOC]
+
+----------------------------------------------------------------------------------------------------
+# Introduction
+
+The external Services running inside the minikube cluster are accessible only from the machine
+on which the minikube is running. This may be inconvenient when working with a remote minikube
+host machine. And sometimes it's impossible to access the Services from the host machine's
+browser.
+
+According to [this](https://github.com/kubernetes/minikube/issues/8008) minikube cannot expose
+external Services outside the cluster machine, and this functionality is not planned to be added.
+
+This section discusses this problem solution methods.
+
+----------------------------------------------------------------------------------------------------
+
+<a name="using_k8s_proxy"></a>
+
+# Using K8s proxy
+
+Built-in
+[K8s Dashboard](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/)
+will be used as an example.
+
+According to this [Stackoverflow answer](https://stackoverflow.com/a/53830578):
+
+````shell
+$ kubectl proxy --address='0.0.0.0' --disable-filter=true &
+[1] 13392
+.  .  .
+Starting to serve on [::]:8001
+
+$ minikube dashboard --url=true &
+[2] 19679
+* Verifying dashboard health ...
+* Launching proxy ...
+* Verifying proxy health ...
+
+greg@deimos:~$ jobs
+[1]-  Running                 kubectl proxy --address='0.0.0.0' --disable-filter=true &
+[2]+  Running                 minikube dashboard --url=true &
+http://127.0.0.1:40897/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/
+
+$ jobs
+[1]-  Running                 kubectl proxy --address='0.0.0.0' --disable-filter=true &
+[2]+  Running                 minikube dashboard --url=true &
+````
+
+> This jobs running in the background will output to the console interleaving with the current
+> activity output. If this is a problem, use redirection to `/dev/null` or to a file. Or
+> alternatively start this processes in separate terminal windows.
+
+Then find the minikube host IP address:
+
+````shell
+$ hostname -I
+192.168.1.500 ...
+````
+
+And correct the URL accordingly:
+<http://192.168.1.500:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/>.
+Then this URL may be opened in a browser on the other machine.
+
+To stop the background processes execute:
+
+````shell
+$ kill %2
+[2]+  Terminated              minikube dashboard --url=true
+
+$ kill %1
+[1]+  Terminated              kubectl proxy --address='0.0.0.0' --disable-filter=true
+
+$ jobs
+<nothing>
+````
+
+or press `Ctrl`+`C` if the processes are running in the separate terminal windows.
+
+----------------------------------------------------------------------------------------------------
+
+<a name="nginx_request_forwarding"></a>
+
+# Using Nginx request forwarding
+
+For some reasons, the K8s proxy didn't work for the deployed user's project, particularly, for
+the one with Mongo Express external Service. So [Nginx](https://www.nginx.com/) is going to be
+used for the requests forwarding. Nginx server was installed previously in the current working
+Ubuntu Linux environment, so its installation is not discussed here.
+
+The following command must be executed if it was not already done or after the minikube cluster
+restart:
+
+````shell
+$ kubectl get services
+NAME                    TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+.  .  .
+mongo-express-service   LoadBalancer   10.101.164.221   <pending>     8081:30000/TCP   19h
+
+$ minikube service mongo-express-service --url=true
+http://192.168.49.2:30000
+````
+
+The returned URL will be used later.
+
+````shell
+$ less /etc/nginx/nginx.conf
+.  .  .
+http {
+.  .  .
+        include /etc/nginx/sites-enabled/*;
+.  .  .
+
+$ sudo vi /etc/nginx/sites-enabled/default
+````
+
+Add another server (using the above URL):
+
+````
+server {
+        listen 8040;
+        listen [::]:8040;
+
+        root /var/www/html;
+
+        # Add index.php to the list if you are using PHP
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name _;
+
+        location / {
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_pass http://192.168.49.2:30000;
+        }
+}
+````
+
+Then restart the nginx service:
+
+````shell
+$ sudo service nginx start
+
+$ service nginx status
+.  .  .
+   Active: active (running) since Mon 2021-07-05 21:48:14 MSK; 7s ago
+.  .  .
+
+$ hostname -I
+192.168.1.500 ...
+````
+
+Then open the link [http://192.168.1.500:8040/]() in a browser on the other machine.
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------

@@ -1,0 +1,165 @@
+<!--METADATA {"title": "K8s YAML Configuration File"} -->
+
+[[BACK](kubectl_commands.html)] | [[NEXT](demo_project.html)]
+
+----------------------------------------------------------------------------------------------------
+<p style="font-size: 40px; font-weight: bold;">K8s YAML Configuration File</p>
+
+[TOC]
+
+----------------------------------------------------------------------------------------------------
+# Three parts of K8s configuration file
+
+[1:02:03](https://youtu.be/X48VuDVv0do?t=3723)
+
+See [nginx-deployment.yaml](../provided/kubernetes-configuration-file-explained/nginx-deployment.yaml)
+and [nginx-service.yaml](../provided/kubernetes-configuration-file-explained/nginx-service.yaml).
+
+`kind: Deployment` and `kind: Service` show what we are going to create.
+
+- First part is `matadata:`
+- Second part is specification (`spec:`). It is specific to the kind of the component.
+- Third part is `status:` --- automatically generated and added by K8s. This is how K8s
+	__continuously__ tracks the desired and the actual states and makes decides about the
+	self-healing.
+
+The `status` information is held in the [etcd](index.html#master_node_processes).
+
+If we specify and apply `spec/replicas: 2` but actual is:
+
+````shell
+$ kubectl get deployment nginx-deployment -o yaml | less
+.  .  .
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+.  .  .
+  name: nginx-deployment
+.  .  .
+status:
+  availableReplicas: 1
+.  .  .
+````
+
+Then K8s will see the problem and will try to create a new replica ASAP.
+
+----------------------------------------------------------------------------------------------------
+# Format of configuration file
+
+[1:05:38](https://youtu.be/X48VuDVv0do?t=3938)
+
+__YAML__ (a recursive acronym for "__YAML__ Ain't Markup Language"):
+[Wikipedia](https://en.wikipedia.org/wiki/YAML) |
+[Official site](https://yaml.org/).
+
+It's a good practice to store configuration files the code (see [IAAC, Infrastructure As Code,
+concept](https://en.wikipedia.org/wiki/Infrastructure_as_code)).
+
+----------------------------------------------------------------------------------------------------
+# Blueprint for Pods (`template`)
+
+[1:06:49](https://youtu.be/X48VuDVv0do?t=4009)
+
+<img src="pict/deployment_abstraction_layers.png" style="float: left; margin: 0 25px 25px 0;" />
+
+Whenever we want to create a Pod we create a Deployment and K8s takes care of the rest.
+
+See [nginx-deployment.yaml](../provided/kubernetes-configuration-file-explained/nginx-deployment.yaml),
+`spec/template:`. The template also has its metadata and specification. So it's a configuration file
+inside a configuration file. The latter configuration applies to a Pod, so it is the __blueprint__
+for a Pod.
+
+<p style="clear: both;"></p>
+
+----------------------------------------------------------------------------------------------------
+# Connecting Services to Deployments and Pods
+
+[1:08:03](https://youtu.be/X48VuDVv0do?t=4083)
+
+This is done using __labels__ and __selectors__. Also see K8s documentation 
+[Labels and Selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/).
+
+![](pict/labels_and_selectors.png)
+
+See [nginx-deployment.yaml](../provided/kubernetes-configuration-file-explained/nginx-deployment.yaml)
+and [nginx-service.yaml](../provided/kubernetes-configuration-file-explained/nginx-service.yaml).
+
+<img src="pict/ports_01.png" style="float: left; margin: 0 25px 25px 0;" />
+
+![](pict/ports_02.png)
+
+So the Service will accept requests on the port `80` and forwards them the the to port `8080`
+of the Pod.
+
+<p style="clear: both;"></p>
+
+Placing the YAML files into the working accessible directory and applying them:
+
+````shell
+$ kubectl apply -f nginx-deployment.yaml
+deployment.apps/nginx-deployment unchanged
+
+$ kubectl apply -f nginx-service.yaml
+service/nginx-service created
+````
+
+Now getting more detailed information about the Pods:
+
+````shell
+$ kubectl get pods -o wide
+NAME                               READY   STATUS    RESTARTS   AGE   IP           NODE       NOMINATED NODE   READINESS GATES
+nginx-deployment-f4b7bbcbc-6kbgw   1/1     Running   0          30h   172.17.0.5   minikube   <none>           <none>
+nginx-deployment-f4b7bbcbc-gpffv   1/1     Running   0          31h   172.17.0.6   minikube   <none>           <none>
+````
+
+Two pods as we have `replicas: 2`. Looking at the service:
+
+````shell
+$ kubectl get services
+NAME            TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)   AGE
+kubernetes      ClusterIP   10.96.0.1        <none>        443/TCP   2d1h
+nginx-service   ClusterIP   10.110.173.246   <none>        80/TCP    117s
+
+$ kubectl describe service nginx-service
+Name:              nginx-service
+.  .  .
+Selector:          app=nginx
+.  .  .
+TargetPort:        8080/TCP
+Endpoints:         172.17.0.5:8080,172.17.0.6:8080
+.  .  .
+````
+
+Now let's look at the status (that is automatically generated):
+
+````shell
+$ kubectl get deployment nginx-deployment -o yaml > nginx-deployment-result.yaml
+
+$ less nginx-deployment-result.yaml
+````
+
+> This automatically generated configuration contains a lot of runtime data. So if we want to 
+> create a blueprint out of it then we need to clean it much.
+
+We can delete the components using configuration files:
+
+````shell
+$ kubectl delete -f nginx-deployment.yaml
+deployment.apps "nginx-deployment" deleted
+
+$ kubectl delete -f nginx-service.yaml
+service "nginx-service" deleted
+````
+
+----------------------------------------------------------------------------------------------------
+[[BACK](kubectl_commands.html)] | [[NEXT](demo_project.html)]
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
