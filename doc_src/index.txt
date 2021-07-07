@@ -221,28 +221,6 @@ General algorithm of adding a new Master/Worker Node:
 - add it to the Cluster.
 
 ----------------------------------------------------------------------------------------------------
-# Minikube and `kubectl` - Local Setup
-
-[34:47](https://www.youtube.com/watch?v=X48VuDVv0do&t=2087s)
-
-In the production environment:
-
-- multiple Master and Worker Nodes are used;
-- each Node is a separate physical or virtual machine.
-
-For a personal testing on a local machine such setup may be too difficult or impossible.
-So [__minicube__](https://minikube.sigs.k8s.io/docs/), open source solution, may be used that
-runs Master and Worker processes on one machine and has Docker runtime container preinstalled.
-
-[`kubectl`](https://kubernetes.io/docs/reference/kubectl/overview/) is a command line tool for
-K8s cluster. There are also web interface and REST API, but `kubectl` is the most powerful. 
-It communicates with the Master Node API Server to fulfill tasks like creating and destroying
-pods, creating services, etc.
-
-> We will use `kubectl` to work with the minikube cluster. But `kubectl` may be used for
-> managing real clusters as well.
-
-----------------------------------------------------------------------------------------------------
 [[NEXT](installation.html)]
 
 ----------------------------------------------------------------------------------------------------

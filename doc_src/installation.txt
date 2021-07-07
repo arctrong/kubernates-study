@@ -1,11 +1,33 @@
-<!--METADATA {"title": "Minikube and kubectl installation"} -->
+<!--METADATA {"title": "Working environment installation"} -->
 
 [[BACK](index.html)] | [[NEXT](kubectl_commands.html)]
 
 ----------------------------------------------------------------------------------------------------
-<p style="font-size: 40px; font-weight: bold;">Minikube and kubectl installation</p>
+<p style="font-size: 40px; font-weight: bold;">Working environment installation</p>
 
 [TOC]
+
+----------------------------------------------------------------------------------------------------
+# Minikube and Kubectl
+
+[34:47](https://www.youtube.com/watch?v=X48VuDVv0do&t=2087s)
+
+In the production environment:
+
+- multiple Master and Worker Nodes are used;
+- each Node is a separate physical or virtual machine.
+
+For a personal testing on a local machine such setup may be too difficult or impossible.
+So [__Minicube__](https://minikube.sigs.k8s.io/docs/), open source solution, may be used that
+runs Master and Worker processes on one machine and has Docker runtime container preinstalled.
+
+[__Kubectl__](https://kubernetes.io/docs/reference/kubectl/overview/) is a command line tool for
+K8s cluster. There are also web interface and REST API, but Kubectl is the most powerful.
+It communicates with the Master Node API Server to fulfill tasks like creating and destroying
+pods, creating services, etc.
+
+> We will use `kubectl` to work with the Minikube cluster. But Kubectl may be used for
+> managing real K8s clusters as well.
 
 ----------------------------------------------------------------------------------------------------
 _Jul 2, 2021_
@@ -159,10 +181,14 @@ Server Version: v1.20.7
 ````
 
 ----------------------------------------------------------------------------------------------------
-# Trying minikube Dashboard
+# Trying Minikube Dashboard
 
-> This step is not necessary. The Dashboard may be a convenient administration tool but we are
-> going to use primarily command line in the course.
+See [K8s Dashboard](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/).
+
+> __Notes:__ __1.__ The Dashboard may be a convenient administration tool but we are going to
+> primarily use command line in the course.
+> 
+> __2.__ This Dashboard is not installed in a real K8s cluster by default.
 
 ````shell
 $ minikube dashboard

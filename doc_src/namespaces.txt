@@ -8,16 +8,180 @@
 [TOC]
 
 ----------------------------------------------------------------------------------------------------
-# K8s Namespaces
+# What is a Namespace?
 
 [1:46:14](https://youtu.be/X48VuDVv0do?t=6374)
 
-
-
-
-----------------------------------------------------------------------------------------------------
+A __Namespace__ may be thought as a virtual cluster inside a cluster.
 
 ----------------------------------------------------------------------------------------------------
+# Default Namespaces
+
+````shell
+$ kubectl get namespaces
+NAME                   STATUS   AGE
+default                Active   3d17h
+kube-node-lease        Active   3d17h
+kube-public            Active   3d17h
+kube-system            Active   3d17h
+kubernetes-dashboard   Active   3d17h
+````
+
+`kubernetes-dashboard` namespace is specific to minikube installation. It's not present in a real
+K8s cluster.
+
+`kube-system` is not for user's components and must not be modified by the users. It contains 
+system processes, Master and Kubectl processes, etc.
+
+`kube-public` is for publicly accessible data like ConfigMap that contains cluster information
+and is accessible even without authentication:
+
+````shell
+$ kubectl cluster-info
+Kubernetes control plane is running at https://192.168.49.2:8443
+KubeDNS is running at https://192.168.49.2:8443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+````
+
+`kube-node-lease` is present in the recent edition of K8s. Contains heartbeats of the Nodes. Each
+Node has associated lease object in this Namespace, that determines the availability of the Node.
+
+`default` Namespace contains all created user's components if the other Namespaces are not created.
+
+----------------------------------------------------------------------------------------------------
+# Create a Namespace
+
+````shell
+$ kubectl create namespace my-namespace
+namespace/my-namespace created
+
+$ kubectl get namespaces
+NAME                   STATUS   AGE
+.  .  .
+my-namespace           Active   3s
+````
+
+But it's probably better to create a Namespace using configuration files:
+
+````code
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-configmap
+  namespace: my-namespace
+data:
+  db_url: mysql-service.database
+````
+
+----------------------------------------------------------------------------------------------------
+# Why to use Namespaces?
+
+[1:49:12](https://youtu.be/X48VuDVv0do?t=6552)
+
+Also see K8s documentation, section
+[Namespaces](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/).
+
+
+## Namespaces group components
+
+![](pict/namespaces_group_conponents_01.png)
+
+With one Namespace it's difficult to overview the architecture.
+
+![](pict/namespaces_group_conponents_02.png)
+
+According to the official
+[K8s documentation](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/)
+using Namespaces should not be considered for smaller projects with fewer users. Though even in 
+smaller projects there may be common resources like logging and monitoring systems, and Namespaces
+help to separate them for better overview.
+
+
+## Name scopes for multiple teams
+
+![](pict/namespaces_name_scopes_01.png)
+
+If two teams develop different applications with (somehow) the same name then Namespaces
+will prevent name conflicts and thus interference on deployment.
+
+
+## Resource sharing
+
+![](pict/namespaces_share_components_01.png)
+
+We can use the same resources for the different development state deployments. I.e. we don't
+need to include the common resources (such as databases) into each deployment. Such architecture
+may be used in [Blue-green deployment](https://en.wikipedia.org/wiki/Blue-green_deployment) when
+there are two servers  and only one of them accepts external requests. The other is accessible 
+only inside the company's internal network and is used for testing the changes. Then, when the 
+changes are tested, the servers swap their roles.
+
+## Resource limits
+
+![](pict/namespaces_resource_restriction_01.png)
+
+Two teams may be prevented from interfering each other's projects. Also resource restrictions
+(like CPU, RAM, storage, etc.) may be defined for a Namespace.
+
+----------------------------------------------------------------------------------------------------
+# Characteristics of Namespaces
+
+[1:55:07](https://youtu.be/X48VuDVv0do?t=6907)
+
+Most components cannot be accessed across the Namespaces.
+
+![](pict/configmap_across_namespaces.png)
+
+Particularly, such components are ConfigMaps and Secrets. We need to create them for each
+Namespace if required.
+
+But Services __can__ be shared across Namespaces. The references are done using the dot notation:
+
+````code
+apiVersion: v1
+kind: ConfigMap
+.  .  .
+data:
+  db_url: mysql-service.database
+````
+
+Here `mysql-service` is the Namespace and `database` is the Service.
+
+Some components __cannot__ be created within a Namespace, they must belong globally to the cluster 
+only. Such components are Volumes and Nodes.
+
+````shell
+$ kubectl api-resources --namespaced=true
+NAME                        SHORTNAMES   APIVERSION                     NAMESPACED   KIND
+.  .  .
+configmaps                  cm           v1                             true         ConfigMap
+pods                        po           v1                             true         Pod
+secrets                                  v1                             true         Secret
+services                    svc          v1                             true         Service
+deployments                 deploy       apps/v1                        true         Deployment
+replicasets                 rs           apps/v1                        true         ReplicaSet
+statefulsets                sts          apps/v1                        true         StatefulSet
+.  .  .
+
+$ kubectl api-resources --namespaced=false
+NAME                              SHORTNAMES   APIVERSION                             NAMESPACED   KIND
+.  .  .
+namespaces                        ns           v1                                     false        Namespace
+nodes                             no           v1                                     false        Node
+.  .  .
+````
+
+----------------------------------------------------------------------------------------------------
+# Create components in Namespaces
+
+[1:57:40](https://youtu.be/X48VuDVv0do?t=7060)
+
+
+
+
+
+
+
+
 
 ----------------------------------------------------------------------------------------------------
 [[BACK](demo_project.html)]
