@@ -151,22 +151,22 @@ only. Such components are Volumes and Nodes.
 
 ````shell
 $ kubectl api-resources --namespaced=true
-NAME                        SHORTNAMES   APIVERSION                     NAMESPACED   KIND
-.  .  .
-configmaps                  cm           v1                             true         ConfigMap
-pods                        po           v1                             true         Pod
-secrets                                  v1                             true         Secret
-services                    svc          v1                             true         Service
-deployments                 deploy       apps/v1                        true         Deployment
-replicasets                 rs           apps/v1                        true         ReplicaSet
-statefulsets                sts          apps/v1                        true         StatefulSet
+NAME                        SHORTNAMES   APIVERSION         NAMESPACED   KIND
+.  .  .                                                
+configmaps                  cm           v1                 true         ConfigMap
+pods                        po           v1                 true         Pod
+secrets                                  v1                 true         Secret
+services                    svc          v1                 true         Service
+deployments                 deploy       apps/v1            true         Deployment
+replicasets                 rs           apps/v1            true         ReplicaSet
+statefulsets                sts          apps/v1            true         StatefulSet
 .  .  .
 
 $ kubectl api-resources --namespaced=false
-NAME                              SHORTNAMES   APIVERSION                             NAMESPACED   KIND
-.  .  .
-namespaces                        ns           v1                                     false        Namespace
-nodes                             no           v1                                     false        Node
+NAME              SHORTNAMES   APIVERSION                   NAMESPACED   KIND
+.  .  .                                           
+namespaces        ns           v1                           false        Namespace
+nodes             no           v1                           false        Node
 .  .  .
 ````
 
