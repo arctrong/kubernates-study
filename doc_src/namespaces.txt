@@ -1,6 +1,6 @@
 <!--METADATA {"title": "K8s Namespaces"} -->
 
-[[BACK](demo_project.html)]
+[[BACK](demo_project.html)] | [[NEXT](ingress.html)]
 
 ----------------------------------------------------------------------------------------------------
 <p style="font-size: 40px; font-weight: bold;">K8s Namespaces</p>
@@ -175,16 +175,99 @@ nodes             no           v1                           false        Node
 
 [1:57:40](https://youtu.be/X48VuDVv0do?t=7060)
 
+If we don't provide a Namespace like this (there's just a `name` element in `metadata`):
 
+````code
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-configmap
+data:
+  db_url: mysql-service.database
+````
 
+then the component is created in the `default` Namespace. Let's check it:
 
+````shell
+$ vi mysql-configmap.yaml
+````
 
+Add the ConfigMap content above:
 
+````shell
+$ kubectl apply -f mysql-configmap.yaml
+configmap/mysql-configmap created
 
+$ kubectl get configmap -n default
+NAME                DATA   AGE
+mysql-configmap     1      76s
 
+$ kubectl describe configmap mysql-configmap
+Name:         mysql-configmap
+Namespace:    default
+.  .  .
+````
+
+We can define the namespace on the component creation:
+
+````shell
+$ kubectl apply -f mysql-configmap.yaml --namespace=my-namespace
+configmap/mysql-configmap created
+
+$ kubectl get configmap -n my-namespace
+NAME               DATA   AGE
+mysql-configmap    1      5m52s
+
+$ kubectl describe configmap mysql-configmap -n my-namespace
+Name:         mysql-configmap
+Namespace:    my-namespace
+.  .  .
+````
+
+But this method is impractical. It's better to define the namespace in the configuration file 
+metadata:
+
+````code
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-configmap
+  namespace: my-namespace
+data:
+  db_url: mysql-service.database
+````
+
+````shell
+$ kubectl delete -f mysql-configmap.yaml
+configmap "mysql-configmap" deleted
+
+$ kubectl apply -f mysql-configmap.yaml
+configmap/mysql-configmap created
+
+$ kubectl get configmap -n my-namespace
+NAME               DATA   AGE
+mysql-configmap    1      79s
+````
+
+This method gives more self-documented source code.
 
 ----------------------------------------------------------------------------------------------------
-[[BACK](demo_project.html)]
+# Change active Namespace
+
+[2:00:04](https://youtu.be/X48VuDVv0do?t=7204)
+
+Adding `-n my-namespace` to all command is inconvenient. But K8s and Kubectl doesn't have a
+solution to set an active Namespace neither globally nor for a session.
+
+There's a separate tool `kubens` that is provided with the other tool `kubectx`, see
+[here](https://github.com/ahmetb/kubectx). But its installation process looks very unfriendly,
+and it failed to install on Ubuntu. So I'm not going to use this tool in this course.
+
+And this may be not a good idea to let a third-party tool intervene in every command of such a
+complex process.
+
+----------------------------------------------------------------------------------------------------
+[[BACK](demo_project.html)] | [[NEXT](ingress.html)]
 
 ----------------------------------------------------------------------------------------------------
 

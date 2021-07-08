@@ -18,6 +18,10 @@ external Services outside the cluster machine, and this functionality is not pla
 
 This section discusses this problem solution methods.
 
+> Also see K8s documentation section
+> [Accessing apps](https://minikube.sigs.k8s.io/docs/handbook/accessing/)
+> for more details.
+
 ----------------------------------------------------------------------------------------------------
 
 <a name="using_k8s_proxy"></a>

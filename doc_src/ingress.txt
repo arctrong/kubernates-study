@@ -1,0 +1,190 @@
+<!--METADATA {"title": "K8s Ingresses"} -->
+
+[[BACK](namespaces.html)]
+
+----------------------------------------------------------------------------------------------------
+<p style="font-size: 40px; font-weight: bold;">K8s Ingresses</p>
+
+[TOC]
+
+----------------------------------------------------------------------------------------------------
+# What is Ingress?
+
+[2:01:52](https://youtu.be/X48VuDVv0do?t=7312)
+
+K8s documentation: [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) 
+and [Ingress Controllers](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/).
+
+A deployment with a UI application Pod and an __external__ service that is accessible by the 
+__HTTP IP address__ and the port is good for prototyping. In the final project we want it to be
+accessed by the __domain name__ and __HTTPS__ protocol.
+
+With an Ingress we use an __internal__ Service and isolate the rest part of the application from
+communication outside the cluster.
+
+![](pict/ingress_introduction.png)
+
+----------------------------------------------------------------------------------------------------
+# Example YAML
+
+[2:03:27](https://youtu.be/X48VuDVv0do?t=7407)
+
+First, consider the setup with the external Service:
+
+![](pict/ingress_before.png)
+
+Then introducing an Ingress. For that we change the service type from external (`LoadBalancer`)
+to internal (`ClusterIP`, by default):
+
+![](pict/ingress_after.png)
+
+`paths:` section defines the paths inside the web-application. Here HTTP protocol is used. HTTPS
+protocol will be introduced later in the course. Note that there's no `nodePort` in the internal
+Service.
+
+Now let's look at the `host` section.
+
+![](pict/ingress_entry_points.png)
+
+`host: myapp.com`:
+
+- must be a valid domain address;
+- represents an __entry point__ of the K8s cluster. The entry point may be a Node inside the
+    K8s cluster or a node outside the K8s cluster (the latter is not clear yet).
+
+----------------------------------------------------------------------------------------------------
+# How to configure Ingress in the cluster?
+
+[2:06:52](https://youtu.be/X48VuDVv0do?t=7612)
+
+Just creating an Ingress component is not enough for the Ingress routing rules to work. In
+addition we need an implementation for the Ingress. This implementation is called 
+__Ingress Controller__. Ingress Controller is a Node or a set of Nodes that work in the K8s
+cluster and actually evaluate and process the Ingress rules.
+
+![](pict/ingress_controller.png)
+
+There are multiple implementations of the Ingress Controller, see
+[here](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/)
+for the list of Ingress Controllers that is supported by Kubernates and by the third parties.
+
+We'll be using NGINX Ingress Controller ([GitHub](https://github.com/kubernetes/ingress-nginx/) |
+[Bare-metal considerations](https://kubernetes.github.io/ingress-nginx/deploy/baremetal/)).
+
+Cloud service providers, like [AWS](https://aws.amazon.com/),
+[Google Cloud](https://cloud.google.com/), [Linode](https://www.linode.com/), if they have
+out-of-the-box K8s solutions, provide their own load balancers as entrypoints.
+
+<img src="pict/proxy_server.png" style="float: left; margin: 0 25px 25px 0;" />
+
+If we deploy the cluster on the Bare Metal we need to configure entrypoints ourselves.
+An entrypoint is a separate server (a Proxy Server) with public IP addresses and ports.
+
+In both cases no Service inside the cluster is exposed outside.
+
+<p style="clear: both;"></p>
+
+----------------------------------------------------------------------------------------------------
+# Demo: Configure Ingress in Minikube
+
+[2:12:15](https://youtu.be/X48VuDVv0do?t=7935)
+
+
+## Installing Ingress Controller in Minikube
+
+````shell
+$ minikube addons enable ingress
+  - Using image docker.io/jettech/kube-webhook-certgen:v1.5.1
+  - Using image k8s.gcr.io/ingress-nginx/controller:v0.44.0
+  - Using image docker.io/jettech/kube-webhook-certgen:v1.5.1
+* Verifying ingress addon...
+* The 'ingress' addon is enabled
+````
+
+This automatically starts the K8s Nginx implementation in Ingress Controller
+([GitHub](https://github.com/kubernetes/ingress-nginx/) |
+[Bare-metal considerations](https://kubernetes.github.io/ingress-nginx/deploy/baremetal/)). This
+implementation may be safely used in production environment as well.
+
+````shell
+$ kubectl get pods -n ingress-nginx
+NAME                                        READY   STATUS      RESTARTS   AGE
+.  .  .
+ingress-nginx-controller-5d88495688-zvlp5   1/1     Running     0          7m10s
+````
+
+
+## Create Ingress rule
+
+[2:13:17](https://www.youtube.com/watch?v=X48VuDVv0do&t=7935s)
+
+We will create Ingress rule for the K8s Dashboard component.
+
+````shell
+$ kubectl get ns
+NAME                   STATUS   AGE
+.  .  .
+kubernetes-dashboard   Active   5d23h
+````
+
+In Minikube it's installed by default but is not accessible externally.
+
+````shell
+$ kubectl get all -n kubernetes-dashboard
+NAME                                            READY   STATUS    RESTARTS   AGE
+.  .  .
+pod/kubernetes-dashboard-968bcb79-whw6n         1/1     Running   11         5d23h
+.  .  .
+NAME                                TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+.  .  .
+service/kubernetes-dashboard        ClusterIP   10.104.85.224   <none>        80/TCP     5d23h
+.  .  .
+````
+
+As we can see, the Service is internal (with type `ClusterIP`).
+
+Creating an ingress rule:
+
+````shell
+ingress_demo$ vi dashboard-ingress.yaml
+````
+
+Add the content of the file
+[`dashboard-ingress.yaml`](../provided/kubernetes-ingress/dashboard-ingress.yaml).
+
+````shell
+$ kubectl apply -f dashboard-ingress.yaml
+Warning: networking.k8s.io/v1beta1 Ingress is deprecated in v1.19+, unavailable in v1.22+; use networking.k8s.io/v1 Ingress
+ingress.networking.k8s.io/dashboard-ingress created
+````
+
+> See [here](https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource)
+> for the new format example. Now using the old one in order to save the time.
+
+````shell
+$ kubectl get ingress -n kubernetes-dashboard
+NAME                CLASS    HOSTS           ADDRESS        PORTS   AGE
+dashboard-ingress   <none>   dashboard.com   192.168.49.2   80      8m43s
+````
+
+So we see that the address was assigned.
+
+
+[2:16:37](https://youtu.be/X48VuDVv0do?t=8197)
+
+
+
+
+----------------------------------------------------------------------------------------------------
+
+[[BACK](namespaces.html)]
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
