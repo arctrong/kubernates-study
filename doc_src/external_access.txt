@@ -21,6 +21,10 @@ This section discusses this problem solution methods.
 > Also see K8s documentation section
 > [Accessing apps](https://minikube.sigs.k8s.io/docs/handbook/accessing/)
 > for more details.
+> 
+> Later in the course [another method](ingress.html#create_ingress_rule)
+> was discussed. But this method still used external Nginx (or the other proxy server)
+> configuration.
 
 ----------------------------------------------------------------------------------------------------
 
@@ -162,6 +166,9 @@ $ hostname -I
 Then open the link [http://192.168.1.500:8040/]() in a browser on the other machine.
 
 ----------------------------------------------------------------------------------------------------
+# Using Ingress component
+
+See [here](ingress.html#create_ingress_rule).
 
 ----------------------------------------------------------------------------------------------------
 

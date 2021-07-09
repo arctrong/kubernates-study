@@ -201,9 +201,13 @@ Error: cannot open display: localhost:10.0
 This works if executed on the Ubuntu host directly. The link is automatically opened in the 
 browser:
 
+<a name="minikube_dashboard_picture"></a>
+
 ![](pict/minikube_dashboard.png)
 
-External access may be adjusted using [these instructions](external_access.html#using_k8s_proxy).
+External access may be adjusted using the instructions: 
+[this](external_access.html#using_k8s_proxy) or [this](ingress.html#create_ingress_rule) (the
+latter is probably better).
 
 ----------------------------------------------------------------------------------------------------
 [[BACK](index.html)] | [[NEXT](kubectl_commands.html)]

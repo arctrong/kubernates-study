@@ -113,6 +113,7 @@ NAME                                        READY   STATUS      RESTARTS   AGE
 ingress-nginx-controller-5d88495688-zvlp5   1/1     Running     0          7m10s
 ````
 
+<a name="create_ingress_rule"></a>
 
 ## Create Ingress rule
 
@@ -143,7 +144,7 @@ service/kubernetes-dashboard        ClusterIP   10.104.85.224   <none>        80
 
 As we can see, the Service is internal (with type `ClusterIP`).
 
-Creating an ingress rule:
+Creating an Ingress rule:
 
 ````shell
 ingress_demo$ vi dashboard-ingress.yaml
@@ -167,10 +168,68 @@ NAME                CLASS    HOSTS           ADDRESS        PORTS   AGE
 dashboard-ingress   <none>   dashboard.com   192.168.49.2   80      8m43s
 ````
 
-So we see that the address was assigned.
+So we see that the address was assigned. Then we add a local domain name resolution rule: 
+`sudo vi /etc/hosts` and add the line `192.168.49.2 dashboard.com` there. Then in a browser 
+directly on the host machine, <http://dashboard.com/> shows the dashboard (see 
+[here](installation.html#minikube_dashboard_picture) how it looks like). Of cause this doesn't
+work externally.
+
+````shell
+$ kubectl describe ingress dashboard-ingress -n kubernetes-dashboard
+Name:             dashboard-ingress
+Namespace:        kubernetes-dashboard
+Address:          192.168.49.2
+Default backend:  default-http-backend:80 (<error: endpoints "default-http-backend" not found>)
+Rules:
+  Host           Path  Backends
+  ----           ----  --------
+  dashboard.com
+                    kubernetes-dashboard:80 (172.17.0.5:9090)
+Annotations:     <none>
+Events:
+  Type    Reason  Age                From                      Message
+  ----    ------  ----               ----                      -------
+  Normal  Sync    25m (x3 over 26m)  nginx-ingress-controller  Scheduled for sync
+````
+
+__Default backend__ does not exist yet and if we request a wrong URL
+<http://dashboard.com/wrong-path> we will see the default  `404 page not found` page. Again, this
+works directly on the host machine. We can create an internal Service with name
+`default-http-backend` in the `kubernetes-dashboard` namespace and a Pod that will give us a
+custom error page:
+
+![](pict/ingress_default_backend.png)
+
+> The course doesn't tell how to open external access to the Dashboard. But
+> [this side step](external_access.html#nginx_request_forwarding) helped. The following new
+> server was created:
+> 
+> ````
+> server {
+>         listen 8050;
+>         listen [::]:8050;
+> 
+>         root /var/www/html;
+>         index index.html index.htm index.nginx-debian.html;
+>         server_name _;
+> 
+>         location / {
+>                 proxy_set_header Host dashboard.com;
+>                 proxy_set_header X-Real-IP $remote_addr;
+>                 proxy_pass http://dashboard.com:80/;
+>         }
+> }
+> ````
+> 
+> Now it works at <http://192.168.1.500:8050/>, where `192.168.1.500` is the externally accessible
+> Minikube host machine IP address.
 
 
-[2:16:37](https://youtu.be/X48VuDVv0do?t=8197)
+## Multiple paths for the same host
+
+[2:20:08](https://youtu.be/X48VuDVv0do?t=8408)
+
+
 
 
 
