@@ -23,7 +23,7 @@ This section discusses this problem solution methods.
 > for more details.
 > 
 > Later in the course [another method](ingress.html#create_ingress_rule)
-> was discussed. But this method still used external Nginx (or the other proxy server)
+> was discussed. But this method still uses external Nginx (or the other proxy server)
 > configuration.
 
 ----------------------------------------------------------------------------------------------------

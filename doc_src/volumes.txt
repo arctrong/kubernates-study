@@ -1,0 +1,83 @@
+<!--METADATA {"title": "K8s Volumes"} -->
+
+[[BACK](helm.html)]
+
+----------------------------------------------------------------------------------------------------
+<p style="font-size: 40px; font-weight: bold;">K8s Volumes</p>
+
+[TOC]
+
+----------------------------------------------------------------------------------------------------
+# K8s Volumes
+
+[2:38:08](https://www.youtube.com/watch?v=X48VuDVv0do&t=9345s)
+
+<img src="pict/volumes_problem.png" style="float: left; margin: 0 25px 25px 0;" />
+
+K8s has no persistence out of the box. So we need to make extra adjustments in order to keep the
+data between the Pods restarts. This may be required for databases and shared directories.
+
+<p style="clear: both;"></p>
+
+We will discuss three components:
+
+- Persistent Volume (PV)
+- Persistent Volume Claim (PVC)
+- Storage Class (SC)
+
+
+## Storage requirements
+
+- Storage doesn't depend on the Pod lifecycle.
+- Storage must me available on all Nodes (as we don't know in which Node the Pod will start).
+- Storage must survive even if the cluster crashes.
+
+----------------------------------------------------------------------------------------------------
+# Persistent Volume
+
+[2:40:14](https://youtu.be/X48VuDVv0do?t=9614)
+
+K8s documentation:
+[Persistent Volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes).
+
+__Persistent Volume (PV)__ may be thought as a cluster resource (like RAM or CPU) that is used
+to store data. It's created via YAML file (`kind: PersistentVolume`). It defines parameters like
+storage space amount but doesn't define the parameter of its actual allocation (local disk inside
+the cluster, external NFS, or Cloud storage).
+
+K8s doesn't care about the actual storage. It provides us a PV as abstraction and let us take
+care about the storage backend (allocation, backup and restore, etc.).
+
+See the documentation section above for the examples of configuration files. Also see K8s
+documentation section
+[Types of Persistent Volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes)
+for the list of the supported backends.
+
+Note that PVs are not namespaced. So they are accessible to all components in all Namespaces.
+
+----------------------------------------------------------------------------------------------------
+# Local and Remote Volume Types
+
+[2:44:35](https://youtu.be/X48VuDVv0do?t=9875)
+
+
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+[[BACK](helm.html)]
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------

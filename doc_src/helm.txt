@@ -1,0 +1,115 @@
+<!--METADATA {"title": "Helm Package Manager"} -->
+
+[[BACK](ingress.html)] | [[NEXT](volumes.html)]
+
+----------------------------------------------------------------------------------------------------
+<p style="font-size: 40px; font-weight: bold;">Helm Package Manager</p>
+
+[TOC]
+
+----------------------------------------------------------------------------------------------------
+# Helm Package Manager
+
+[2:24:18](https://youtu.be/X48VuDVv0do?t=8658)
+
+This projects is actively developed now so it changed much from version to version. In this
+section just basic features of Helm are discussed.
+
+__Helm__ is a package manager for K8s (like `apt` and `yum`).
+
+[Helm hub](https://hub.helm.sh/) | 
+[Helm charts GitHub Project](https://github.com/helm/charts) | 
+[Install Helm](https://helm.sh/docs/intro/install/)
+
+> As for Jul 11, 2021, [Helm charts GitHub Project](https://github.com/helm/charts) says:
+> "This project is no longer supported" and links to [Artifact Hub](https://artifacthub.io/).
+
+![](pict/helm_problem.png)
+
+<img src="pict/helm_solution.png" style="float: left; margin: 0 25px 25px 0;" />
+
+Sometimes we need to deploy a set of components that is pretty standard among different
+configurations so some other users may have probably done it. Helm provides a way of collecting
+this bundle of YAML files (a __Helm Chart__) into a package and making it available for use in
+other K8s clusters (in the __Helm Repository__).
+
+There may be public and private repositories (the latter are accessible inside companies).
+
+<p style="clear: both;"></p>
+
+----------------------------------------------------------------------------------------------------
+# Templating Engine
+
+[2:29:06](https://youtu.be/X48VuDVv0do?t=8946)
+
+![](pict/helm_templating_engine.png)
+
+It addresses the case when we have a set of microservices which YAML files are almost the same.
+Helm allows to define a common blueprint for all of these microservices with placeholders that
+will be replaced on deployment. The placeholders look like `{{ .Values.name }}`. The values are 
+defined in the file `values.yaml` or may be defined in the command line with the `--set`
+parameter.
+
+----------------------------------------------------------------------------------------------------
+# Use Cases for Helm
+
+Allows deploying the same application in different application clusters with one command.
+
+----------------------------------------------------------------------------------------------------
+# Helm Chart Structure
+
+Helm documentation: [Getting Started](https://helm.sh/docs/chart_template_guide/getting_started/).
+
+Helm charts are structured like this:
+
+````code
+mychart/
+  Chart.yaml
+  values.yaml
+  charts/
+  templates/
+  ...
+````
+
+The `templates/` directory is for template files. When Helm evaluates a chart, it will send all
+of the files in the `templates/` directory through the template rendering engine. It then
+collects the results of those templates and sends them on to Kubernetes.
+
+The `values.yaml` contains the default values for a chart. These values may be overridden by users
+during helm `install` or helm `upgrade`.
+
+The `Chart.yaml` file contains a description of the chart and can be accessed from within a
+template. The `charts/` directory may contain other charts (which we call _subcharts_).
+
+The installation command is:
+
+````shell
+helm install <chartname>
+````
+
+----------------------------------------------------------------------------------------------------
+# Release management
+
+[2:35:45](https://youtu.be/X48VuDVv0do?t=9345)
+
+In Helm version 2 there are a client and a server part (the latter called __Tiller__). In this 
+architecture Helm copies and stores configurations on each deployment thus creating a history 
+of Helm executions (like `install` or `upgrade`). `rollback` command restores the previous
+deployment state.
+
+But the problem is that __Tiller__ has too much permissions inside the K8s cluster that is
+a security issue. So in Helm version 3 Tiller was removed.
+
+----------------------------------------------------------------------------------------------------
+
+[[BACK](ingress.html)] | [[NEXT](volumes.html)]
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------

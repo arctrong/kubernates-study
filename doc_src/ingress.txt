@@ -1,6 +1,6 @@
 <!--METADATA {"title": "K8s Ingresses"} -->
 
-[[BACK](namespaces.html)]
+[[BACK](namespaces.html)] | [[NEXT](helm.html)] 
 
 ----------------------------------------------------------------------------------------------------
 <p style="font-size: 40px; font-weight: bold;">K8s Ingresses</p>
@@ -229,14 +229,31 @@ custom error page:
 
 [2:20:08](https://youtu.be/X48VuDVv0do?t=8408)
 
+### One domain but many services
 
+![](pict/one_host_many_services.png)
+
+### Subdomains
+
+![](pict/many_hosts.png)
+
+----------------------------------------------------------------------------------------------------
+# Configuring TLS Certificate
+
+[2:22:24](https://youtu.be/X48VuDVv0do?t=8544)
+
+![](pict/ingress_tls.png)
+
+- Data keys must be exactly `tls.crt` and `tls.keys`.
+- Values are files contents, not files locations
+- Secret components must be in the same Namespace as the Ingress component.
 
 
 
 
 ----------------------------------------------------------------------------------------------------
 
-[[BACK](namespaces.html)]
+[[BACK](namespaces.html)] | [[NEXT](helm.html)] 
 
 ----------------------------------------------------------------------------------------------------
 
