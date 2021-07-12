@@ -1,6 +1,6 @@
 <!--METADATA {"title": "K8s Volumes"} -->
 
-[[BACK](helm.html)]
+[[BACK](helm.html)] | [[NEXT](stateful_sets.html)]
 
 ----------------------------------------------------------------------------------------------------
 <p style="font-size: 40px; font-weight: bold;">K8s Volumes</p>
@@ -28,9 +28,9 @@ We will discuss three components:
 
 ## Storage requirements
 
-- Storage doesn't depend on the Pod lifecycle.
-- Storage must me available on all Nodes (as we don't know in which Node the Pod will start).
-- Storage must survive even if the cluster crashes.
+1. Storage doesn't depend on the Pod lifecycle.
+2. Storage must me available on all Nodes (as we don't know in which Node the Pod will start).
+3. Storage must survive even if the cluster crashes.
 
 ----------------------------------------------------------------------------------------------------
 # Persistent Volume
@@ -56,21 +56,73 @@ for the list of the supported backends.
 Note that PVs are not namespaced. So they are accessible to all components in all Namespaces.
 
 ----------------------------------------------------------------------------------------------------
-# Local and Remote Volume Types
+# Persistence Volume Claims
 
 [2:44:35](https://youtu.be/X48VuDVv0do?t=9875)
 
+__Local__ volumes violate requirements 2 and 3 (see above), so for databases persistence 
+__remote__ storage must be used.
 
+K8s __Admins__ set up the cluster and assures it has enough resources. K8s __Users__ deploy
+applications. So Admins configure the physical storage (like local, NFS and cloud) and make it
+available inside the cluster. They also configure PVs for the storage backends. The Users
+configure Pods to reference the configured PVs.
+
+<img src="pict/pvc_usage.png" style="float: left; margin: 0 25px 25px 0;" />
+
+Applications __claim__ the PVs using __Persistence Volume Claim (PVC)__ components. Configuration
+files for these components have `type: PersistenceVolumeClaim`. A PVC must exist in the same
+Namespace as the Pod that references this PVC. In the Pod's container the actual path to the
+storage location is mounted.
+
+These levels of abstractions help distribute responsibilities between Admins and Users.
+
+<p style="clear: both;"></p>
+
+----------------------------------------------------------------------------------------------------
+# ConfigMap and Secret as volume types
+
+[2:51:28](https://youtu.be/X48VuDVv0do?t=10288)
+
+They are:
+
+- local volumes;
+- not created using PV and PVC components;
+- managed by K8s.
+
+Assume we need a certificate file (not a certificate as a binary object) mounted inside a Pod.
+Or some application configuration need to be represented as files. In this case we create
+ConfigMaps and/or Secrets and mount them as Volumes inside the container.
+
+----------------------------------------------------------------------------------------------------
+# Storage Classes
+
+[2:55:00](https://youtu.be/X48VuDVv0do?t=10500)
+
+K8s documentation:
+[Storage Classes](https://kubernetes.io/docs/concepts/storage/storage-classes/).
+
+![](pict/storage_classes.png)
+
+<img src="pict/storage_class.png" style="float: right; margin: 0 0 25px 25px;" />
+
+With many Pods, creating and managing external PersistentStorage components and their
+corresponding backends may be to hard or impossible. To make this process more efficient another
+component called __StorageClass (SC)__ is used. SC provisions PersistentVolumes __dynamically__
+when PVC claims it. It's created with configuration file with `type: StorageClass`.
+ 
+SC is another abstraction level that defines:
+
+- the underlying storage provider;
+- parameters for the storage.
+
+The SC is referenced from the PVC YAML file.
+
+<p style="clear: both;"></p>
 
 ----------------------------------------------------------------------------------------------------
 
-----------------------------------------------------------------------------------------------------
-
-----------------------------------------------------------------------------------------------------
-
-----------------------------------------------------------------------------------------------------
-
-[[BACK](helm.html)]
+[[BACK](helm.html)] | [[NEXT](stateful_sets.html)]
 
 ----------------------------------------------------------------------------------------------------
 

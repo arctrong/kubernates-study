@@ -9,5 +9,6 @@
 -i doc_src/ingress.txt -o doc/ingress.html --template doc_src/templates/custom.html --no-css
 -i doc_src/helm.txt -o doc/helm.html --template doc_src/templates/custom.html --no-css
 -i doc_src/volumes.txt -o doc/volumes.html --template doc_src/templates/custom.html --no-css
+-i doc_src/stateful_sets.txt -o doc/stateful_sets.html --template doc_src/templates/custom.html --no-css
 
 
