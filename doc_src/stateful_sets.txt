@@ -1,6 +1,6 @@
 <!--METADATA {"title": "K8s StatefulSets"} -->
 
-[[BACK](volumes.html)]
+[[BACK](volumes.html)] | [[NEXT](services.html)]
 
 ----------------------------------------------------------------------------------------------------
 <p style="font-size: 40px; font-weight: bold;">K8s StatefulSets</p>
@@ -34,17 +34,63 @@ same for both of them.
 
 [3:01:58](https://youtu.be/X48VuDVv0do?t=10918)
 
+<img src="pict/stateless_app_replication.png" style="float: right; margin: 0 0 25px 25px;" />
 
+With a __stateless__ application:
 
+- Pods are identical and interchangeable; 
+- Pods are created in random order and with random IDs (hashes);
+- the Service load balances to any Pod.
 
+<p style="clear: both;"></p>
+
+Replicating __stateful application__ is more difficult. It has different requirements. The
+replica Pods:
+
+- cannot be created/deleted at the same time;
+- cannot be randomly addressed;
+- are not identical and individual identity.
+
+Here's how stateful application replication is done:
+
+![](pict/stateful_app_replication.png)
+
+Master Pod can read and write while worker (slave) Pods can only read data. And after the master
+changes data the workers don't read their storage before synchronization is done. If a new worker
+Pod is added it clones its state from the previous (not any) Pod and then becomes available.
+With this schema the data will survive even if all Pods die.
+
+To make it work a Persistence Volume contains information about the Pod identity state (whether
+it's a master or a slave). And it's important to use remote storage because the Pod may be
+restored on the other Node and the storage must be accessible to it anyway.
+
+StatefulSet Pods have fixed ordered names in format `${StatefulSet name}-${ordinal}`. The first
+Pod is the master and the rest are the slaves in their start order. The next Pod is created if
+the previous one is up and running. The Pod deletion is done in the reverse order and also
+one by one.
+
+<img src="pict/stateful-set-endpoints.png" style="float: right; margin: 0 0 25px 25px;" />
+
+A StatefulSet Pod has two endpoints. The first is the same as for a Deployment. The second is
+DNS name in format `${pod name}.${governing service domain}`.
+
+So when a Pod restarts the IP address changes but the endpoint stays the same. So Pod has
+_sticky_ identity.
+
+<p style="clear: both;"></p>
+
+> __Note.__ Replicating stateful apps is a complex task. K8s helps but there are a lot of things
+> to be done by the maintainer:
+> 
+> - Configuring the cloning and data synchronization.
+> - Making remote storage available.
+> - Managing back up.
+> 
+> That's because stateful apps are not perfect for containerized environment.
 
 ----------------------------------------------------------------------------------------------------
 
-----------------------------------------------------------------------------------------------------
-
-----------------------------------------------------------------------------------------------------
-
-[[BACK](volumes.html)]
+[[BACK](volumes.html)] | [[NEXT](services.html)]
 
 ----------------------------------------------------------------------------------------------------
 

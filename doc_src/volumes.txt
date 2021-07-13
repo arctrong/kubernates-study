@@ -40,6 +40,8 @@ We will discuss three components:
 K8s documentation:
 [Persistent Volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes).
 
+<img src="pict/pv_config.png" style="float: right; margin: 0 0 25px 25px;" />
+
 __Persistent Volume (PV)__ may be thought as a cluster resource (like RAM or CPU) that is used
 to store data. It's created via YAML file (`kind: PersistentVolume`). It defines parameters like
 storage space amount but doesn't define the parameter of its actual allocation (local disk inside
@@ -55,10 +57,15 @@ for the list of the supported backends.
 
 Note that PVs are not namespaced. So they are accessible to all components in all Namespaces.
 
+<p style="clear: both;"></p>
+
 ----------------------------------------------------------------------------------------------------
 # Persistence Volume Claims
 
 [2:44:35](https://youtu.be/X48VuDVv0do?t=9875)
+
+K8s documentation: [Persistent Volumes,
+Introduction](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#introduction).
 
 __Local__ volumes violate requirements 2 and 3 (see above), so for databases persistence 
 __remote__ storage must be used.
@@ -68,7 +75,7 @@ applications. So Admins configure the physical storage (like local, NFS and clou
 available inside the cluster. They also configure PVs for the storage backends. The Users
 configure Pods to reference the configured PVs.
 
-<img src="pict/pvc_usage.png" style="float: left; margin: 0 25px 25px 0;" />
+![](pict/pvc_usage.png)
 
 Applications __claim__ the PVs using __Persistence Volume Claim (PVC)__ components. Configuration
 files for these components have `type: PersistenceVolumeClaim`. A PVC must exist in the same
@@ -77,12 +84,12 @@ storage location is mounted.
 
 These levels of abstractions help distribute responsibilities between Admins and Users.
 
-<p style="clear: both;"></p>
-
 ----------------------------------------------------------------------------------------------------
 # ConfigMap and Secret as volume types
 
 [2:51:28](https://youtu.be/X48VuDVv0do?t=10288)
+
+<img src="pict/config_map_volume.png" style="float: right; margin: 0 0 25px 25px;" />
 
 They are:
 
@@ -93,6 +100,8 @@ They are:
 Assume we need a certificate file (not a certificate as a binary object) mounted inside a Pod.
 Or some application configuration need to be represented as files. In this case we create
 ConfigMaps and/or Secrets and mount them as Volumes inside the container.
+
+<p style="clear: both;"></p>
 
 ----------------------------------------------------------------------------------------------------
 # Storage Classes
