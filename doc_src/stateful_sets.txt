@@ -53,6 +53,8 @@ replica Pods:
 
 Here's how stateful application replication is done:
 
+<a name="master_slave_pods"></a>
+
 ![](pict/stateful_app_replication.png)
 
 Master Pod can read and write while worker (slave) Pods can only read data. And after the master

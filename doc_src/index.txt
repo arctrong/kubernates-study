@@ -63,9 +63,10 @@ with a new IP address is created that is very inconvenient. So __Services__ come
 __Service__ --- an IP address that can be attached to a Pod. If the Pod dies the service and the 
 IP address will stay. There may be __external__ services that are open for external communication
 and __internal__ ones (like database services). A service is an (HTTP) IP address and a port. But 
-for an end product we would want HTTPS and a domain name.
+for an end product we would want HTTPS and a domain name. In this course, there's a
+[separate section](services.html) devoted to Services.
 
-__Ingress__ accepts internal requests and forwards it to the Services.
+__Ingress__ accepts external requests and forwards it to the Services.
 
 <p style="clear: both;"></p>
 
