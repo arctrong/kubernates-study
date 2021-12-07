@@ -60,7 +60,7 @@ concept](https://en.wikipedia.org/wiki/Infrastructure_as_code)).
 
 [1:06:49](https://youtu.be/X48VuDVv0do?t=4009)
 
-<img src="pict/deployment_abstraction_layers.png" style="float: left; margin: 0 25px 25px 0;" />
+<p><img src="pict/deployment_abstraction_layers.png" style="float: left; margin: 0 25px 25px 0;" /></p>
 
 Whenever we want to create a Pod we create a Deployment and K8s takes care of the rest.
 
@@ -84,7 +84,7 @@ This is done using __labels__ and __selectors__. Also see K8s documentation
 See [nginx-deployment.yaml](../provided/kubernetes-configuration-file-explained/nginx-deployment.yaml)
 and [nginx-service.yaml](../provided/kubernetes-configuration-file-explained/nginx-service.yaml).
 
-<img src="pict/ports_01.png" style="float: left; margin: 0 25px 25px 0;" />
+<p><img src="pict/ports_01.png" style="float: left; margin: 0 25px 25px 0;" /></p>
 
 ![](pict/ports_02.png)
 

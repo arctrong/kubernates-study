@@ -26,7 +26,7 @@ __Helm__ is a package manager for K8s (like `apt` and `yum`).
 
 ![](pict/helm_problem.png)
 
-<img src="pict/helm_solution.png" style="float: left; margin: 0 25px 25px 0;" />
+<p><img src="pict/helm_solution.png" style="float: left; margin: 0 25px 25px 0;" /></p>
 
 Sometimes we need to deploy a set of components that is pretty standard among different
 configurations so some other users may have probably done it. Helm provides a way of collecting

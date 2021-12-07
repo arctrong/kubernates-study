@@ -88,7 +88,7 @@ Pod is added it need to connect to the specific Pod for synchronization.
 
 The first option to achieve this is using K8s specific API but this is inefficient.
 
-<img src="pict/headless-services.png" style="float: right; margin: 0 0 25px 25px;" />
+<p><img src="pict/headless-services.png" style="float: right; margin: 0 0 25px 25px;" /></p>
 
 The other option is using __DNS Lookups__ for Service that returns a single IP address
 (ClusterIP). In Service config we set parameter `spec/clusterIP` to `None`. Then the DNS server

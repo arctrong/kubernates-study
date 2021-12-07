@@ -43,7 +43,7 @@ Documentation section:
 
 ## Nodes and Pods
 
-<img src="pict/pods.png" style="float: left; margin: 0 25px 25px 0;" />
+<p><img src="pict/pods.png" style="float: left; margin: 0 25px 25px 0;" /></p>
 
 __Node__ is a physical or virtual machine.
 
@@ -58,7 +58,7 @@ with a new IP address is created that is very inconvenient. So __Services__ come
 
 ## Services and Ingresses
 
-<img src="pict/services_and_ingresses.png" style="float: left; margin: 0 25px 25px 0;" />
+<p><img src="pict/services_and_ingresses.png" style="float: left; margin: 0 25px 25px 0;" /></p>
 
 __Service__ --- an IP address that can be attached to a Pod. If the Pod dies the service and the 
 IP address will stay. There may be __external__ services that are open for external communication
@@ -95,7 +95,7 @@ _Jul 2, 2021_
 
 [14:24](https://youtu.be/X48VuDVv0do?t=864)
 
-<img src="pict/volumes.png" style="float: left; margin: 0 25px 25px 0;" />
+<p><img src="pict/volumes.png" style="float: left; margin: 0 25px 25px 0;" /></p>
 
 When a database Pod stops, the data is gone. __Volumes__ are K8s components that attach physical
 storage to Pods. The storage may be _local_ (inside the K8s node), _remote_ or _cloud_ (outside

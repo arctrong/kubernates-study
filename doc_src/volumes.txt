@@ -12,7 +12,7 @@
 
 [2:38:08](https://www.youtube.com/watch?v=X48VuDVv0do&t=9345s)
 
-<img src="pict/volumes_problem.png" style="float: left; margin: 0 25px 25px 0;" />
+<p><img src="pict/volumes_problem.png" style="float: left; margin: 0 25px 25px 0;" /></p>
 
 K8s has no persistence out of the box. So we need to make extra adjustments in order to keep the
 data between the Pods restarts. This may be required for databases and shared directories.
@@ -40,7 +40,7 @@ We will discuss three components:
 K8s documentation:
 [Persistent Volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes).
 
-<img src="pict/pv_config.png" style="float: right; margin: 0 0 25px 25px;" />
+<p><img src="pict/pv_config.png" style="float: right; margin: 0 0 25px 25px;" /></p>
 
 __Persistent Volume (PV)__ may be thought as a cluster resource (like RAM or CPU) that is used
 to store data. It's created via YAML file (`kind: PersistentVolume`). It defines parameters like
@@ -89,7 +89,7 @@ These levels of abstractions help distribute responsibilities between Admins and
 
 [2:51:28](https://youtu.be/X48VuDVv0do?t=10288)
 
-<img src="pict/config_map_volume.png" style="float: right; margin: 0 0 25px 25px;" />
+<p><img src="pict/config_map_volume.png" style="float: right; margin: 0 0 25px 25px;" /></p>
 
 They are:
 
@@ -113,7 +113,7 @@ K8s documentation:
 
 ![](pict/storage_classes.png)
 
-<img src="pict/storage_class.png" style="float: right; margin: 0 0 25px 25px;" />
+<p><img src="pict/storage_class.png" style="float: right; margin: 0 0 25px 25px;" /></p>
 
 With many Pods, creating and managing external PersistentStorage components and their
 corresponding backends may be to hard or impossible. To make this process more efficient another

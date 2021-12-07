@@ -75,7 +75,7 @@ Cloud service providers, like [AWS](https://aws.amazon.com/),
 [Google Cloud](https://cloud.google.com/), [Linode](https://www.linode.com/), if they have
 out-of-the-box K8s solutions, provide their own load balancers as entrypoints.
 
-<img src="pict/proxy_server.png" style="float: left; margin: 0 25px 25px 0;" />
+<p><img src="pict/proxy_server.png" style="float: left; margin: 0 25px 25px 0;" /></p>
 
 If we deploy the cluster on the Bare Metal we need to configure entrypoints ourselves.
 An entrypoint is a separate server (a Proxy Server) with public IP addresses and ports.

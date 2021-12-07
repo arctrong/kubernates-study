@@ -12,7 +12,7 @@
 
 [2:58:38](https://youtu.be/X48VuDVv0do?t=10718)
 
-<img src="pict/stateful_and_stateless_apps.png" style="float: right; margin: 0 0 25px 25px;" />
+<p><img src="pict/stateful_and_stateless_apps.png" style="float: right; margin: 0 0 25px 25px;" /></p>
 
 __StatefulSet__ is used specifically for __stateful__ applications (like databases and other
 applications that store data to keep track of its state).
@@ -34,7 +34,7 @@ same for both of them.
 
 [3:01:58](https://youtu.be/X48VuDVv0do?t=10918)
 
-<img src="pict/stateless_app_replication.png" style="float: right; margin: 0 0 25px 25px;" />
+<p><img src="pict/stateless_app_replication.png" style="float: right; margin: 0 0 25px 25px;" /></p>
 
 With a __stateless__ application:
 
@@ -71,7 +71,7 @@ Pod is the master and the rest are the slaves in their start order. The next Pod
 the previous one is up and running. The Pod deletion is done in the reverse order and also
 one by one.
 
-<img src="pict/stateful-set-endpoints.png" style="float: right; margin: 0 0 25px 25px;" />
+<p><img src="pict/stateful-set-endpoints.png" style="float: right; margin: 0 0 25px 25px;" /></p>
 
 A StatefulSet Pod has two endpoints. The first is the same as for a Deployment. The second is
 DNS name in format `${pod name}.${governing service domain}`.
