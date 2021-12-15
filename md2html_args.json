@@ -1,0 +1,39 @@
+{
+    "options": {
+        "verbose": true
+    },
+    "default": {
+        "template": "doc_src/templates/custom.html",
+        "no-css": true,
+        "verbose": true,
+        "page-flows": ["sections"]
+    },
+    "documents": [
+        { "input": "doc_src/about.txt", "output": "doc/about.html", "title": "About the course" },
+        { "input": "doc_src/index.txt", "output": "doc/index.html", "title": "Theory" },
+        { "input": "doc_src/installation.txt", "output": "doc/installation.html", "title": "Working environment installation" },
+        { "input": "doc_src/kubectl_commands.txt", "output": "doc/kubectl_commands.html", "title": "Main Kubectl commands" },
+        { "input": "doc_src/yaml_config_file.txt", "output": "doc/yaml_config_file.html", "title": "YAML Configuration file" },
+        { "input": "doc_src/demo_project.txt", "output": "doc/demo_project.html", "title": "Complete demo project" },
+        { "input": "doc_src/namespaces.txt", "output": "doc/namespaces.html", "title": "Namespaces" },
+        { "input": "doc_src/ingress.txt", "output": "doc/ingress.html", "title": "Ingresses" },
+        { "input": "doc_src/helm.txt", "output": "doc/helm.html", "title": "Helm Package Manager" },
+        { "input": "doc_src/volumes.txt", "output": "doc/volumes.html", "title": "Persisting Data with Volumes" },
+        { "input": "doc_src/stateful_sets.txt", "output": "doc/stateful_sets.html", "title": "StatefulSets" },
+        { "input": "doc_src/services.txt", "output": "doc/services.html", "title": "Services" },
+
+        { "input": "doc_src/external_access.txt", "output": "doc/external_access.html", "title": "Access external Services from outside the Minicube cluster",
+            "page-flows": [] }
+    ],
+    "plugins": {
+        "page-flows": {
+            "header": [
+                { "link": "doc/about.html", "title": "About" }
+            ],
+            "side_steps": [
+                { "link": "doc/external_access.html", "title": "Access external Services from outside the Minicube cluster" }
+            ]
+        },
+        "variables": {"logo": "<b style=\"margin-right:7px;\"><span styles=\"\">K8s</span></b>" }
+    }
+}
