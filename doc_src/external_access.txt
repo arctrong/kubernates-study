@@ -24,9 +24,7 @@ This section discusses this problem solution methods.
 > configuration.
 
 ----------------------------------------------------------------------------------------------------
-
 <a name="using_k8s_proxy"></a>
-
 # Using K8s proxy
 
 Built-in
@@ -88,9 +86,7 @@ $ jobs
 or press `Ctrl`+`C` if the processes are running in the separate terminal windows.
 
 ----------------------------------------------------------------------------------------------------
-
-<a name="nginx_request_forwarding"></a>
-
+<!--index ["Nginx"]--><a name="nginx_request_forwarding"></a>
 # Using Nginx request forwarding
 
 For some reasons, the K8s proxy didn't work for the deployed user's project, particularly, for

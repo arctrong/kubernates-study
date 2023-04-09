@@ -3,6 +3,7 @@
 [TOC]
 
 ----------------------------------------------------------------------------------------------------
+<!--index ["Minikube", "Kubectl"]-->
 # Minikube and Kubectl
 
 [34:47](https://www.youtube.com/watch?v=X48VuDVv0do&t=2087s)

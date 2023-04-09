@@ -5,6 +5,7 @@
 ----------------------------------------------------------------------------------------------------
 _Jun 29, 2021_
 
+<!--index ["Kubernetes", "K8s"]-->
 # Introduction
 
 Wikipedia: [Kubernetes](https://en.wikipedia.org/wiki/Kubernetes).
@@ -19,6 +20,7 @@ and is now maintained by the Cloud Native Computing Foundation.
 Kubernetes license: [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
 ----------------------------------------------------------------------------------------------------
+<!--index ["orchestration"]-->
 # Orchestration tools features
 
 __High availability__ --- low or no downtime.
@@ -40,8 +42,10 @@ Documentation section:
 
 <p><img src="pict/pods.png" style="float: left; margin: 0 25px 25px 0;" /></p>
 
+<!--index ["node"]-->
 __Node__ is a physical or virtual machine.
 
+<!--index ["pod"]-->
 __Pod__ --- the smallest unit of K8s. Abstraction over container. K8s works not only with Docker
 containers. As users we interact only with the Kubernetes layer. Each Pod has its own IP address.
 
@@ -55,17 +59,20 @@ with a new IP address is created that is very inconvenient. So __Services__ come
 
 <p><img src="pict/services_and_ingresses.png" style="float: left; margin: 0 25px 25px 0;" /></p>
 
+<!--index ["services"]-->
 __Service__ --- an IP address that can be attached to a Pod. If the Pod dies the service and the 
 IP address will stay. There may be __external__ services that are open for external communication
 and __internal__ ones (like database services). A service is an (HTTP) IP address and a port. But 
 for an end product we would want HTTPS and a domain name. In this course, there's a
 [separate section](services.html) devoted to Services.
 
+<!--index ["ingress"]-->
 __Ingress__ accepts external requests and forwards it to the Services.
 
 <p style="clear: both;"></p>
 
 
+<!--index ["ConfigMap", "secret"]-->
 ## ConfigMap and Secrets
 
 _Jul 1, 2021_
@@ -86,6 +93,7 @@ format).
 
 _Jul 2, 2021_
 
+<!--index ["volumes"]-->
 ## Volumes
 
 [14:24](https://youtu.be/X48VuDVv0do?t=864)
@@ -102,6 +110,7 @@ the K8s node).
 > responsible for the storage setup, backup, etc.
 
 
+<!--index ["deployment", "StatefulSets"]-->
 ## Deployment and StatefulSet
 
 [16:22](https://youtu.be/X48VuDVv0do?t=982)
@@ -138,6 +147,7 @@ There are much more other components but these are the main ones.
 
 [22:29](https://youtu.be/X48VuDVv0do?t=1349)
 
+<!--index ["master nodes", "slave nodes"]-->
 The main topics to be discussed:
 
 - __Master__ and __worker__ (or __slave__) Nodes.
@@ -152,7 +162,8 @@ A __worker service__ or __worker Node__ is a Node that fulfills the user's tasks
 processes must be installed on __every__ such Node:
 
 - __Container runtime__ (Docker in our case);
-- __Kubelet__ --- the process of the K8s itself. It interacts both --- the container runtime
+- <!--index ["Kubelet"]-->__Kubelet__ --- the process of the K8s itself. It interacts both --- 
+    the container runtime
 	and the Node. Kubelet starts a Pod with a container inside and assigns it resources (like
 	CPU, RAM and storage);
 - __Kube proxy__ --- intelligently forwards requests between Pods inside the Cluster. E.g. 
@@ -189,7 +200,7 @@ Four completely different processes run on __every__ Master Node:
 - __Controller Manager__ --- detects state changes (like Pod crash) and tries to restore the
 	Cluster state ASAP. It sends requests to the Scheduler and the same cycle is started 
 	(including resource calculation, request to the Kubelet, etc.).
-- __etcd__ (sometimes called the "cluster brain") --- key-value store of
+- <!--index ["etcd"]-->__etcd__ (sometimes called the "cluster brain") --- key-value store of
 	the Cluster state. Keeps information about Nodes and Pods, the Cluster health, etc. Other
 	processes use etcd when they need this information. (__Note.__ No actual application data is
 	stored in the etcd.)
@@ -207,8 +218,9 @@ case:
 
 Let's say we will have 2 Master Nodes and 3 Worker Nodes.
 
-> __Remark.__ Master Nodes are more important but they have less load of work and consume less 
-> resources.
+!!! note
+    Master Nodes are more important but they have less load of work and consume less 
+    resources.
 
 General algorithm of adding a new Master/Worker Node:
 

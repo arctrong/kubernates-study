@@ -1,0 +1,196 @@
+{
+  "doc/about.html": [],
+  "doc/index.html": [
+    {
+      "entry": "Kubernetes",
+      "link": "index.html#index_entry_index_1",
+      "title": "Theory"
+    },
+    {
+      "entry": "K8s",
+      "link": "index.html#index_entry_index_1",
+      "title": "Theory"
+    },
+    {
+      "entry": "orchestration",
+      "link": "index.html#index_entry_index_2",
+      "title": "Theory"
+    },
+    {
+      "entry": "node",
+      "link": "index.html#index_entry_index_3",
+      "title": "Theory"
+    },
+    {
+      "entry": "pod",
+      "link": "index.html#index_entry_index_4",
+      "title": "Theory"
+    },
+    {
+      "entry": "services",
+      "link": "index.html#index_entry_index_5",
+      "title": "Theory"
+    },
+    {
+      "entry": "ingress",
+      "link": "index.html#index_entry_index_6",
+      "title": "Theory"
+    },
+    {
+      "entry": "ConfigMap",
+      "link": "index.html#index_entry_index_7",
+      "title": "Theory"
+    },
+    {
+      "entry": "secret",
+      "link": "index.html#index_entry_index_7",
+      "title": "Theory"
+    },
+    {
+      "entry": "volumes",
+      "link": "index.html#index_entry_index_8",
+      "title": "Theory"
+    },
+    {
+      "entry": "deployment",
+      "link": "index.html#index_entry_index_9",
+      "title": "Theory"
+    },
+    {
+      "entry": "StatefulSets",
+      "link": "index.html#index_entry_index_9",
+      "title": "Theory"
+    },
+    {
+      "entry": "master nodes",
+      "link": "index.html#index_entry_index_10",
+      "title": "Theory"
+    },
+    {
+      "entry": "slave nodes",
+      "link": "index.html#index_entry_index_10",
+      "title": "Theory"
+    },
+    {
+      "entry": "Kubelet",
+      "link": "index.html#index_entry_index_11",
+      "title": "Theory"
+    },
+    {
+      "entry": "etcd",
+      "link": "index.html#index_entry_index_12",
+      "title": "Theory"
+    }
+  ],
+  "doc/installation.html": [
+    {
+      "entry": "Minikube",
+      "link": "installation.html#index_entry_index_1",
+      "title": "Working environment installation"
+    },
+    {
+      "entry": "Kubectl",
+      "link": "installation.html#index_entry_index_1",
+      "title": "Working environment installation"
+    }
+  ],
+  "doc/kubectl_commands.html": [
+    {
+      "entry": "Kubectl, commands",
+      "link": "kubectl_commands.html#index_entry_index_1",
+      "title": "Main Kubectl commands"
+    },
+    {
+      "entry": "deployment, create with Kubectl",
+      "link": "kubectl_commands.html#index_entry_index_2",
+      "title": "Main Kubectl commands"
+    }
+  ],
+  "doc/yaml_config_file.html": [
+    {
+      "entry": "configuration file, YAML",
+      "link": "yaml_config_file.html#index_entry_index_1",
+      "title": "YAML Configuration file"
+    },
+    {
+      "entry": "YAML, configuration file",
+      "link": "yaml_config_file.html#index_entry_index_1",
+      "title": "YAML Configuration file"
+    },
+    {
+      "entry": "blueprint",
+      "link": "yaml_config_file.html#index_entry_index_2",
+      "title": "YAML Configuration file"
+    }
+  ],
+  "doc/demo_project.html": [],
+  "doc/namespaces.html": [
+    {
+      "entry": "namespace",
+      "link": "namespaces.html#index_entry_index_1",
+      "title": "Namespaces"
+    }
+  ],
+  "doc/ingress.html": [
+    {
+      "entry": "ingress",
+      "link": "ingress.html#index_entry_index_1",
+      "title": "Ingresses"
+    }
+  ],
+  "doc/helm.html": [
+    {
+      "entry": "Helm, package manager",
+      "link": "helm.html#index_entry_index_1",
+      "title": "Helm Package Manager"
+    }
+  ],
+  "doc/volumes.html": [
+    {
+      "entry": "volumes",
+      "link": "volumes.html#index_entry_index_1",
+      "title": "Persisting Data with Volumes"
+    },
+    {
+      "entry": "persistence volume claims",
+      "link": "volumes.html#index_entry_index_2",
+      "title": "Persisting Data with Volumes"
+    },
+    {
+      "entry": "PVC",
+      "link": "volumes.html#index_entry_index_2",
+      "title": "Persisting Data with Volumes"
+    }
+  ],
+  "doc/stateful_sets.html": [
+    {
+      "entry": "StatefulSets",
+      "link": "stateful_sets.html#index_entry_index_1",
+      "title": "StatefulSets"
+    },
+    {
+      "entry": "stateless application",
+      "link": "stateful_sets.html#index_entry_index_2",
+      "title": "StatefulSets"
+    },
+    {
+      "entry": "stateful application",
+      "link": "stateful_sets.html#index_entry_index_3",
+      "title": "StatefulSets"
+    }
+  ],
+  "doc/services.html": [
+    {
+      "entry": "services",
+      "link": "services.html#index_entry_index_1",
+      "title": "Services"
+    }
+  ],
+  "doc/external_access.html": [
+    {
+      "entry": "Nginx",
+      "link": "external_access.html#index_entry_index_1",
+      "title": "Access external Services from outside the Minicube cluster"
+    }
+  ]
+}

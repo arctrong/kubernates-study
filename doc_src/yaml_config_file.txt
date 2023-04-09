@@ -3,6 +3,7 @@
 [TOC]
 
 ----------------------------------------------------------------------------------------------------
+<!--index ["configuration file, YAML", "YAML, configuration file"]-->
 # Three parts of K8s configuration file
 
 [1:02:03](https://youtu.be/X48VuDVv0do?t=3723)
@@ -51,6 +52,7 @@ It's a good practice to store configuration files the code (see [IAAC, Infrastru
 concept](https://en.wikipedia.org/wiki/Infrastructure_as_code)).
 
 ----------------------------------------------------------------------------------------------------
+<!--index ["blueprint"]-->
 # Blueprint for Pods (`template`)
 
 [1:06:49](https://youtu.be/X48VuDVv0do?t=4009)

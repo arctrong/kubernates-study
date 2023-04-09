@@ -1,5 +1,7 @@
 <!--METADATA {"title": "Main kubectl commands"} -->
 
+<!--index ["Kubectl, commands"]-->
+
 [TOC]
 
 ----------------------------------------------------------------------------------------------------
@@ -32,6 +34,7 @@ minikube   Ready    control-plane,master   14h   v1.20.7
 There's the only Master Node so far.
 
 ----------------------------------------------------------------------------------------------------
+<!--index ["deployment, create with Kubectl"]-->
 # Creating a Deployment
 
 [44:52](https://youtu.be/X48VuDVv0do?t=2692)

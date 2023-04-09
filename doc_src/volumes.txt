@@ -3,6 +3,7 @@
 [TOC]
 
 ----------------------------------------------------------------------------------------------------
+<!--index ["volumes"]-->
 # K8s Volumes
 
 [2:38:08](https://www.youtube.com/watch?v=X48VuDVv0do&t=9345s)
@@ -55,6 +56,7 @@ Note that PVs are not namespaced. So they are accessible to all components in al
 <p style="clear: both;"></p>
 
 ----------------------------------------------------------------------------------------------------
+<!--index ["persistence volume claims", "PVC"]-->
 # Persistence Volume Claims
 
 [2:44:35](https://youtu.be/X48VuDVv0do?t=9875)

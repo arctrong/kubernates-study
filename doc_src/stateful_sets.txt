@@ -3,6 +3,7 @@
 [TOC]
 
 ----------------------------------------------------------------------------------------------------
+<!--index ["StatefulSets"]-->
 # K8s StatefulSets
 
 [2:58:38](https://youtu.be/X48VuDVv0do?t=10718)
@@ -31,6 +32,7 @@ same for both of them.
 
 <p><img src="pict/stateless_app_replication.png" style="float: right; margin: 0 0 25px 25px;" /></p>
 
+<!--index ["stateless application"]-->
 With a __stateless__ application:
 
 - Pods are identical and interchangeable; 
@@ -39,7 +41,8 @@ With a __stateless__ application:
 
 <p style="clear: both;"></p>
 
-Replicating __stateful application__ is more difficult. It has different requirements. The
+<!--index ["stateful application"]-->l
+Replicating __stateful__ application is more difficult. It has different requirements. The
 replica Pods:
 
 - cannot be created/deleted at the same time;
