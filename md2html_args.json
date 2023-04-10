@@ -32,7 +32,8 @@
         "page-flows": {
             "header": [
                 { "link": "doc/about.html", "title": "About" },
-                { "link": "doc/index_page.html", "title": "Index" }
+                { "link": "doc/index_page.html", "title": "Index" },
+                { "link": "https://github.com/arctrong/kubernates-study", "title": "GitHub", "external": true }
             ],
             "side_steps": [
                 { "link": "doc/external_access.html", "title": "Access external Services from outside the Minicube cluster" }
